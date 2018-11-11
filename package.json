@@ -20,6 +20,7 @@
   "homepage": "https://github.com/bkeefe313/grapeChat#readme",
   "dependencies": {
     "express": "4.16.4",
+    "jquery": "^3.3.1",
     "p5": "^0.7.2",
     "socket.io": "2.1.1"
   }

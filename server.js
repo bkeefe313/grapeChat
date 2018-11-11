@@ -1,23 +1,28 @@
+
 const express = require('express');
 const socketio = require('socket.io');
 const path = require('path');
+const app = express();
 
 const PORT = process.env.PORT || 3000;
-const INDEX = path.join(__dirname, 'index.html');
+const INDEX = __dirname + '/client/';
 
-const server = express()
-  .use((req, res) => res.sendFile(INDEX) )
+const server = app
+  .use(express.static(INDEX))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+
 
 const io = socketio(server);
 
-/*
+
 io.on('connection', (socket) => {
   console.log('Client connected');
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
-*/
 
+var users = [];
+var userColors = [];
 io.sockets.on('connection', function (socket) {
 
     //on each user's connection
