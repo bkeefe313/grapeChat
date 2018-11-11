@@ -68,7 +68,7 @@ function setup() {
 
 
 function draw() { //calls constantly
-
+    console.log("main.js running");
 }
 
 

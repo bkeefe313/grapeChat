@@ -15,6 +15,10 @@ const server = app
 
 const io = socketio(server);
 
+function draw(){
+    console.log("server.js running");
+}
+
 
 io.on('connection', (socket) => {
   console.log('Client connected');
