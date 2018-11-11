@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 const INDEX = __dirname + '/client/';
 
 const server = app
-  .use(express.static(INDEX + 'index.html'))
+  .use(express.static(INDEX))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));   
 
 
