@@ -8,17 +8,12 @@ const PORT = process.env.PORT || 3000;
 const INDEX = __dirname + '/client/';
 
 const server = app
-  .use(express.static(INDEX))
+  .use(express.static(INDEX + 'index.html'))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));   
 
 
 
 const io = socketio(server);
-
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-});
 
 
 io.on('connection', (socket) => {
