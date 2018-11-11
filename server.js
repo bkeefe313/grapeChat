@@ -9,15 +9,16 @@ const INDEX = __dirname + '/client/';
 
 const server = app
   .use(express.static(INDEX))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));   
 
 
 
 const io = socketio(server);
 
-function draw(){
-    console.log("server.js running");
-}
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
 
 
 io.on('connection', (socket) => {
