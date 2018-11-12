@@ -1,26 +1,25 @@
-//npm imports
-var express  = require('express');
-var socketio = require('socket.io');
-var http     = require('http');
 
-//web server app
-var app      = express();
-var server   = http.createServer(app);
-var io       = socketio(server);
+const express = require('express');
+const socketio = require('socket.io');
+const path = require('path');
+const app = express();
 
-//web server meta
-var webroot  = __dirname + '/../client/';
-var port     = process.env.port || 3000;
+const PORT = process.env.PORT || 3000;
+const INDEX = __dirname + '/client/';
 
-//static hosting
-app.use('/', express.static(webroot));
+const server = app
+    .use(express.static(INDEX))
+    .listen(PORT, () => console.log(`Listening on ${ PORT }`));   
 
 
-server.listen(port, function(){
-    console.log('hosting from' + webroot);
-    console.log('server listening on http://localhost:' + port + '/')
+
+const io = socketio(server);
+
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
 });
-
 
 var users = [];
 var userColors = [];
