@@ -129,7 +129,7 @@ function setup() {
     $('#send').click(function () {
             var input = $('#message');
             var text = input.val().trim();
-            if (text.length > 0) {
+            if (text.length > 0 && text.length < 250) {
                 socket.emit('message', {
                     t: text,
                     name: currentUser

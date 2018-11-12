@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link href='forums.css' rel='stylesheet'>
-    <title>GrapeChat Forums</title>
+    <title>GrapeChat: Forums</title>
 </head>
 
 <body>
@@ -26,9 +26,11 @@
                 <button id="post-confirm">Post</button>
             </div>
         </div>
-        <div id="posts-list">
-            <h2>Posts</h2>
-        </div>
+        <form action="save-to-log.php" method="POST">
+            <div id="posts-list">
+                <h2>Posts</h2>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
