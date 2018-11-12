@@ -1,3 +1,10 @@
+var socket = io();
+var el = document.getElementById('log');
+
+socket.on('time', function(timeString) {
+  el.innerHTML = 'Server time: ' + timeString;
+});
+/*
 var socket = io.connect('http://localhost:3000');
 var userColor = '';
 
@@ -110,3 +117,4 @@ function generateId() {
     //}
     return text;
 }
+*/

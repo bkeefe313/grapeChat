@@ -21,6 +21,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+
+
+/*
 var users = [];
 var userColors = [];
 io.sockets.on('connection', function (socket) {
@@ -99,4 +103,4 @@ io.sockets.on('connection', function (socket) {
     }
 });
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+*/
