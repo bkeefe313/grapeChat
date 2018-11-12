@@ -17,18 +17,6 @@ const io = socketio(server);
 
 
 io.on('connection', (socket) => {
-  console.log('Client connected');
-  socket.on('disconnect', () => console.log('Client disconnected'));
-});
-
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
-
-/*
-var users = [];
-var userColors = [];
-io.sockets.on('connection', function (socket) {
-
     //on each user's connection
     socket.on('user', function (data) {
         var name = data.t;
@@ -101,6 +89,4 @@ io.sockets.on('connection', function (socket) {
         //}
         return text;
     }
-});
-
-*/
+}
