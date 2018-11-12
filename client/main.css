@@ -8,6 +8,10 @@ p {
     padding-bottom: 0px;
 }
 
+a {
+    font-family: monospace;
+}
+
 #content{
     margin: auto;
     width: 75%;

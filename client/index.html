@@ -1,37 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <link href='main.css' rel = 'stylesheet'>
-    <title>Node Chat</title>
+    <link href='main.css' rel='stylesheet'>
+    <title>GrapeChat</title>
 </head>
-    <body>
 
-        <div id="content">
-            <h1>Chat</h1>
-
-            <div id="user">
-                <span>My name is: </span>
-                <input id="user-name">
-                <button id="user-save">Save</button>
-            </div>
+<body>
+    <div id="login">
+        <div id="old-user">
+            <a>Already have an account? Login!</a>
             <br>
-
-            <div id="log">
-                <div class="message">Message log:</div>
-            </div>
-
+            <span>username: </span>
+            <input id="old-username">
             <br>
-            <div id="controls">
-                <input id="message" disabled>
-                <br>
-                <button id="send" disabled>Send</button>
-            </div>
+            <span>password: </span>
+            <input type="password" id="old-user-pw">
+            <button id="login-button">Login</button>
+        </div>
+        <div id="new-user">
+            <a>No account? Create One!</a>
+            <br>
+            <span>username: </span>
+            <input id="new-username">
+            <br>
+            <span>password: </span>
+            <input type="password" id="new-user-pw">
+            <button id="create-account">Create Account</button>
+        </div>
+    </div>
+    <div id="logged-in">
+        <button id="logout-button">Logout</button>
+    </div>
+    <div id="content">
+        <nav>
+            <li><a href="index.html">Chat</a></li>
+            <li><a href="pages/forums/forums.html">Forums</a></li>
+            <li><a href="pages/secretHitler/secretHitler.html">Secret Hitler</a></li>
+
+        </nav>
+        <h1>GrapeChat</h1>
+        <div id="log">
+            <div class="message">Message Feed:</div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
-        <script src="main.js"></script>
-    </body>
+        <br>
+        <div id="controls">
+            <input id="message" disabled>
+            <br>
+            <button id="send" disabled>Send</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
 </html>
