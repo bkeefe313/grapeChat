@@ -17,19 +17,17 @@
 
         </nav>
         <h1>Forums</h1>
-        <form id="new-post">
+        <div id="new-post">
             <p>New Post:</p>
             <span>Post Title</span>
             <input type="text" id="post-title">
             <br>
-            <textarea type="text" id="post-content" name="Text1" cols="40" rows="5"></textarea>
+            <textarea type="text" id="post-content" name="Text1" cols="40" rows="5" maxlength="1000"></textarea>
             <button id="post-confirm">Post</button>
-        </form>
-        <form action="save-to-log.php" method="POST">
-            <div id="posts-list">
-                <h2>Posts</h2>
-            </div>
-        </form>
+        </div>
+        <div id="posts-list">
+            <h2>Posts</h2>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

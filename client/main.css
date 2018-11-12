@@ -13,25 +13,30 @@ body {
     font-family: monospace;
     border: solid black 1px;
     margin: auto;
+    background-color: darkslateblue;
+    padding:5px;
+    width:100%;
 }
 
 #controls {
     display:none;
 }
 
-#message {
+#new-user-email {
+    margin-left: 23px;
+}
+
+input {
     background-color: darkslateblue;
     color: aliceblue;
-    width: 100%;
     padding: 5px 5px;
     margin: 8px 0;
     border-width: 1px;
-    border-color:black;
+    border-color: black;
 }
 
-#log {
-    background-color: darkslateblue;
-    padding:5px;
+#message {
+    width: 100%;
 }
 
 p {
@@ -39,7 +44,10 @@ p {
 }
 
 nav {
+    width: 200px;
+    padding: 2px;
     list-style-type: none;
+    border: solid black 1px;
 }
 
 button {

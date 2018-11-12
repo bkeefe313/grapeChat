@@ -4,9 +4,9 @@ var currentUser = localStorage.getItem("currentUser");
 
 function setup() {    
     if(loggedIn && currentUser != ""){
-        $('<a/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
+        $('<p/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
     } else {
-        $('<a/>').text("You are not logged in and cannot post. To log in, go back to the Chat page.").appendTo('#logged-in');
+        $('<p/>').text("You are not logged in and cannot post. To log in, go back to the Chat page.").appendTo('#logged-in');
         $('#post-title').prop('disabled', true);
         $('#post-content').prop('disabled', true);
         $('#post-confirm').prop('disabled', true);
@@ -41,9 +41,7 @@ function setup() {
 }
 
 function post(title, author, content) {
-    $('<div/>').text(title).appendTo('#posts-list');
-    $('<div/>').text("posted by: " + author).appendTo('#posts-list');
-    $('<div/>').text(content).appendTo('#posts-list');
+    // :/
 }
 
 

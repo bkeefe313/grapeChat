@@ -4,19 +4,43 @@ body {
     color: aliceblue;
 }
 
+input {
+    background-color: darkslateblue;
+    color: aliceblue;
+    padding: 5px 5px;
+    margin: 8px 0;
+    border-width: 1px;
+    border-color: black;
+}
+
 #post-content {
     background-color: darkslateblue;
     color: aliceblue;
-}
-
-#post-title {
-    background-color: darkslateblue;
-    color: aliceblue;
+    border-width: 1px;
+    width: 100%;
+    height: 100px;
+    border-color: black;
+    resize:none;
 }
 
 #new-post{
     margin-right: 1100px;
     color: aliceblue;
+}
+
+button {
+    background-color: darkslateblue;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+p {
+    margin: 0px;
 }
 
 nav {
@@ -47,5 +71,9 @@ a:visited {
 }
 
 a:link {
-    color: darkgoldenrod;
+    color: gold;
+}
+
+a:hover{
+    color: palevioletred;
 }
