@@ -15,8 +15,11 @@ const server = app
 
 const io = socketio(server);
 
-
+var users = [];
+var userColors = [];
 io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
     //on each user's connection
     socket.on('user', function (data) {
         var name = data.t;
@@ -90,3 +93,11 @@ io.on('connection', (socket) => {
         return text;
     }
 });
+
+/*
+
+io.sockets.on('connection', function (socket) {
+
+    
+*/
+
