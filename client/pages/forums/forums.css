@@ -1,3 +1,51 @@
 body {
     font-family: monospace;
+    background-color: slateblue;
+    color: aliceblue;
+}
+
+#post-content {
+    background-color: darkslateblue;
+    color: aliceblue;
+}
+
+#post-title {
+    background-color: darkslateblue;
+    color: aliceblue;
+}
+
+#new-post{
+    margin-right: 1100px;
+    color: aliceblue;
+}
+
+nav {
+    list-style-type: none;
+}
+
+button {
+    background-color: darkslateblue;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+button:hover{
+    background-color:purple;
+}
+
+button:active{
+    background-color: darkred;
+}
+
+a:visited {
+    color: gold;
+}
+
+a:link {
+    color: darkgoldenrod;
 }

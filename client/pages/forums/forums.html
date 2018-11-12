@@ -9,23 +9,22 @@
 
 <body>
     <div id="logged-in"></div>
+    <br>
     <div id="content">
         <nav>
+            <p>Navigation</p>
             <li><a href="/index.html">Chat</a></li>
 
         </nav>
         <h1>Forums</h1>
-        <div id="new-post">
+        <form id="new-post">
             <p>New Post:</p>
-            <div id="post-title-div">
-                <span>Post Title</span>
-                <input id="post-title">
-            </div>
-            <div id="post-content-div">
-                <textarea id="post-content" name="Text1" cols="40" rows="5"></textarea>
-                <button id="post-confirm">Post</button>
-            </div>
-        </div>
+            <span>Post Title</span>
+            <input type="text" id="post-title">
+            <br>
+            <textarea type="text" id="post-content" name="Text1" cols="40" rows="5"></textarea>
+            <button id="post-confirm">Post</button>
+        </form>
         <form action="save-to-log.php" method="POST">
             <div id="posts-list">
                 <h2>Posts</h2>
