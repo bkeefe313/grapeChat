@@ -10,7 +10,7 @@ var io       = socketio(server);
 
 //web server meta
 var webroot  = __dirname + '/../client/';
-var port     = 3000;
+var port     = process.env.port || 3000;
 
 //static hosting
 app.use('/', express.static(webroot));
