@@ -7,6 +7,7 @@ function setup() {
     $('#controls').hide();
     $('#play-sh').hide();
     $('#leave-sh').hide();
+    $('#ready-up').hide();
     $('#leave-sh').prop("disabled", true);
     msgCount = 0;
     
@@ -45,6 +46,10 @@ function setup() {
             $('#players').append('<div id="' + data[i] + '" class="player">' + data[i] + "</div>");
         }
     });
+    
+    socket.on('sh-ready-up', function(data){
+        $('#' + data).css("background-color", "green");
+    });
 
     $('#send').click(function () {
         var input = $('#message');
@@ -78,6 +83,14 @@ function setup() {
 
         }
     });
+    
+    $('#chat-nav').click(function () {
+        if (loggedIn) {
+            socket.emit('sh-player-left', currentUser);
+        } else {
+
+        }
+    });
 
     $('#play-sh').click(function () {
         if (loggedIn) {
@@ -86,11 +99,16 @@ function setup() {
             $('#play-sh').hide();
             $('#play-sh').prop("disabled", true);
             $('#leave-sh').show();
+            $('#ready-up').show();
             $('#leave-sh').prop("disabled", false);
             socket.emit('sh-player-joined', currentUser);
         } else {
 
         }
+    });
+    
+    $('#ready-up').click(function () {
+        socket.emit('sh-ready-up', currentUser);
     });
 }
 

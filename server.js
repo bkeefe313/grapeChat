@@ -21,17 +21,12 @@ io.on('connection', (socket) => {
 
     socket.on('user-login', function (data) {
         var name = data.t;
-        var color = '#'+Math.floor(Math.random()*16777215).toString(16);
+        var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
         var u = true;
 
-        for (var i = 0; i < users.length; i++) {
-            if (name == users[i]) {
-                socket.emit('rejected-login', "username taken!");
-                u = false;
-            }
-        }
+        u = users.includes(name);
 
-        if (u) {
+        if (!u) {
             users.push(name); //store user in an array
             userColors.push(color);
             console.log(name + ' connected\nusers: ' + users.length); //log the connection
@@ -40,12 +35,14 @@ io.on('connection', (socket) => {
                 name: name,
                 c: color
             });
+        } else {
+            socket.emit('rejected-login', "username taken!");
         }
 
     });
-    
-    socket.on('request-new-color', function(data){
-        userColors[users.indexOf(data)] = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+    socket.on('request-new-color', function (data) {
+        userColors[users.indexOf(data)] = '#' + Math.floor(Math.random() * 16777215).toString(16);
     });
 
     socket.on('message', function (data) {
@@ -58,7 +55,7 @@ io.on('connection', (socket) => {
 
         console.log(data.name + ': ' + data);
     });
-    
+
     socket.on('sh-message', function (data) {
         var message = {
             user: data.name,
@@ -67,10 +64,10 @@ io.on('connection', (socket) => {
         };
         io.emit('sh-message', message);
     });
-    
-    socket.on('sh-player-joined', function(data){
+
+    socket.on('sh-player-joined', function (data) {
         var color = userColors[users.indexOf(data)];
-        if(!shPlayers.includes(data)){
+        if (!shPlayers.includes(data)) {
             shPlayers.push(data);
             io.emit('sh-player-joined', {
                 name: data,
@@ -80,17 +77,21 @@ io.on('connection', (socket) => {
             socket.emit('sh-failed-join');
         }
     });
-    
-    socket.on('sh-player-left', function(data){
+
+    socket.on('sh-player-left', function (data) {
         shPlayers.splice(shPlayers.indexOf(data), 1);
         io.emit('sh-player-left', {
             name: data
         });
     });
-    
-    socket.on('entered-sh-page', function(){
+
+    socket.on('entered-sh-page', function () {
         socket.emit('show-active-players', shPlayers);
-    })
+    });
+    
+    socket.on('sh-ready-up', function(data){
+        io.emit('sh-ready-up', data);
+    });
 
     socket.on('disconnect', function () {
         if (!socket.user) //make sure socket has a user before proceeding
@@ -100,6 +101,11 @@ io.on('connection', (socket) => {
             users.splice(users.indexOf(socket.user), 1);
             socket.broadcast.emit('otherUserDisconnect', socket.user);
             console.log(socket.user + 'disconnected\nusers: ' + users.length);
+
+            if (shPlayers.includes(socket.user)) {
+                io.emit('sh-player-left', socket.user);
+                shPlayers.splice(shPlayers.indexOf(socket.user, 1));
+            }
         }
     });
 });
