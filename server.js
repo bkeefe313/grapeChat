@@ -3,7 +3,6 @@ const socketio = require('socket.io');
 const path = require('path');
 const app = express();
 
-
 const PORT = process.env.PORT || 3000;
 const INDEX = __dirname + '/client/';
 
@@ -16,6 +15,7 @@ const io = socketio(server);
 var users = [];
 var shPlayers = [];
 var userColors = [];
+var readyPlayers = [];
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
 
@@ -67,6 +67,7 @@ io.on('connection', (socket) => {
 
     socket.on('sh-player-joined', function (data) {
         var color = userColors[users.indexOf(data)];
+
         if (!shPlayers.includes(data)) {
             shPlayers.push(data);
             io.emit('sh-player-joined', {
@@ -88,12 +89,17 @@ io.on('connection', (socket) => {
     socket.on('entered-sh-page', function () {
         socket.emit('show-active-players', shPlayers);
     });
-    
-    socket.on('sh-ready-up', function(data){
+
+    socket.on('sh-ready-up', function (data) {
+        readyPlayers.push(data);
         io.emit('sh-ready-up', data);
+        if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 1) {
+            io.emit('start-sh', readyPlayers.length);
+        }
     });
-    
-    socket.on('sh-unready', function(data){
+
+    socket.on('sh-unready', function (data) {
+        readyPlayers.splice(readyPlayers.indexOf(data), 1);
         io.emit('sh-unready', data);
     });
 
@@ -114,9 +120,8 @@ io.on('connection', (socket) => {
     });
 });
 
-/*
-
-io.sockets.on('connection', function (socket) {
-
-    
-*/
+function draw() {
+    if(readyPlayers < 5){
+        io.emit('abort-sh');
+    }
+}

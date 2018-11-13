@@ -11,7 +11,7 @@ function setup() {
     $('#unready').hide();
     $('#leave-sh').prop("disabled", true);
     msgCount = 0;
-    
+
     socket.emit('entered-sh-page');
 
     if (loggedIn && currentUser != "") {
@@ -27,34 +27,47 @@ function setup() {
     socket.on('sh-message', function (data) {
         chat(data.user + ': ' + data.message, data.c);
     });
-    
-    socket.on('sh-player-joined', function(data){
+
+    socket.on('sh-player-joined', function (data) {
         chat(data.name + " has joined the lobby!");
         $('#players').append('<div id="' + data.name + '" class="player">' + data.name + "</div>");
     });
-    
-    socket.on('sh-player-left', function(data){
+
+    socket.on('sh-player-left', function (data) {
         chat(currentUser + " has left the lobby!");
         $('#' + currentUser).remove();
     });
-    
-    socket.on('sh-failed-join', function(){
+
+    socket.on('sh-failed-join', function () {
         $('<div/>').text("failed to join, already in game").appendTo('#logged-in');
     });
-    
-    socket.on('show-active-players', function(data){
-        for(var i = 0; i < data.length; i++){
+
+    socket.on('show-active-players', function (data) {
+        for (var i = 0; i < data.length; i++) {
             $('#players').append('<div id="' + data[i] + '" class="player">' + data[i] + "</div>");
         }
     });
-    
-    socket.on('sh-ready-up', function(data){
+
+    socket.on('sh-ready-up', function (data) {
         $('#' + data).attr('class', 'player-ready');
         chat(data + ' is ready to start!');
     });
-    
-    socket.on('sh-unready', function(data){
+
+    socket.on('sh-unready', function (data) {
         $('#' + data).attr('class', 'player');
+    });
+
+    socket.on('start-sh', function (data) {
+        var i = 5;
+        chat("STARTING GAME WITH " + data + " PLAYERS...", '#ff0000');
+        var int = setInterval(function(){
+            chat(i+'...', '#ff0000'); 
+            if(i!=0)
+                i--;
+            else
+                clearInterval(int);
+        }, 1000);
+        socket.emit('choose-roles');
     });
 
     $('#send').click(function () {
@@ -89,7 +102,7 @@ function setup() {
 
         }
     });
-    
+
     $('#chat-nav').click(function () {
         if (loggedIn) {
             socket.emit('sh-player-left', currentUser);
@@ -112,13 +125,13 @@ function setup() {
 
         }
     });
-    
+
     $('#ready-up').click(function () {
         socket.emit('sh-ready-up', currentUser);
         $('#ready-up').hide();
         $('#unready').show();
     });
-    
+
     $('#unready').click(function () {
         socket.emit('sh-unready', currentUser);
         $('#ready-up').show();
@@ -128,5 +141,13 @@ function setup() {
 
 
 function chat(msg, c) { //broadcast function
-    $('#log').append('<p class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
+    if (c)
+        $('#log').append('<div class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
+    else
+        $('#log').append('<p>' + msg + '</p>');
+}
+
+function flushChat(){
+    $('#log').remove();
+    $('#chat').append('<div id="log"></div>');
 }
