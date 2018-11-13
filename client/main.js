@@ -5,10 +5,12 @@ var currentUser = localStorage.getItem("currentUser");
 
 function setup() {
     $('#logout-button').hide();
+    $('#new-color').hide();
 
     if (loggedIn && currentUser != "") {
         $('#login').hide();
         $('#logout-button').show();
+        $('#new-color').show();
         $('<a/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
         $('#controls').show();
         $('#message').prop("disabled", false);
@@ -28,12 +30,13 @@ function setup() {
     });
 
     socket.on('message', function (data) {
-        chat(data.user + ': ' + data.message);
+        chat(data.user + ': ' + data.message, data.c);
     });
 
     socket.on('validated-login', function (data) {
         $('#login').hide();
         $('#logout-button').show();
+        $('#new-color').show();
         $('#controls').show();
         $('#message').prop('disabled', false);
         $('#send').prop('disabled', false);
@@ -41,16 +44,18 @@ function setup() {
         localStorage.setItem("currentEmail", data.e);
         localStorage.setItem("currentUser", data.name);
         localStorage.setItem("loggedIn", true);
-        
+
         currentUser = localStorage.getItem("currentUser");
-        
+
         $('<a/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
     });
 
     socket.on('rejected-login', function (data) {
         $('<div/>').text("Failed login. " + data).appendTo('#logged-in');
-        $('#old-username').prop('disabled', false);
-        $('#old-user-pw').prop('disabled', false);
+    });
+    
+    socket.on('new-color-created', function(data){
+        c = data;
     });
 
     $('#logout-button').click(function () {
@@ -73,51 +78,56 @@ function setup() {
             $('<div/>').text("invalid username").appendTo('#logged-in');
         }
     });
-
-    $('#send').click(function () {
-            var input = $('#message');
-            var text = input.val().trim();
-            if (text.length > 0 && text.length < 250) {
-                socket.emit('message', {
-                    t: text,
-                    name: currentUser
-                });
-                input.val('');
-            }
+    
+    $('#new-color').click(function () {
+        socket.emit('request-new-color', currentUser);
     });
 
-        $('#message').on('keyup', function (e) {
-            var ENTER_KEY = 13;
-            if (e.keyCode === ENTER_KEY) {
-                $('#send').click(); //sends message with enter key
-            }
-        });
-
-    }
-
-
-    function draw() { //calls constantly
-
-    }
-
-
-    function chat(msg) { //broadcast function
-        $('<div/>').text(msg).appendTo('#log');
-    }
-
-    function generateId() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        //for (var z = 0; z < idLog.length; z++) {
-        //if (text == idLog[i]) {
-        for (var i = 0; i < 5; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
+    $('#send').click(function () {
+        var input = $('#message');
+        var text = input.val().trim();
+        if (text.length > 0 && text.length < 250) {
+            socket.emit('message', {
+                t: text,
+                name: currentUser
+            });
+            input.val('');
         }
-        //} else {
+    });
 
-        //}
-        //}
-        return text;
+    $('#message').on('keyup', function (e) {
+        var ENTER_KEY = 13;
+        if (e.keyCode === ENTER_KEY) {
+            $('#send').click(); //sends message with enter key
+        }
+    });
+
+}
+
+
+function draw() { //calls constantly
+
+}
+
+
+function chat(msg, c) { //broadcast function
+    $('#log').append('<p class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
+    
+}
+
+function generateId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 5; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    //for (var z = 0; z < idLog.length; z++) {
+    //if (text == idLog[i]) {
+    for (var i = 0; i < 5; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
+    //} else {
+
+    //}
+    //}
+    return text;
+}

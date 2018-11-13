@@ -8,6 +8,9 @@ function setup() {
     $('#play-sh').hide();
     $('#leave-sh').hide();
     $('#leave-sh').prop("disabled", true);
+    msgCount = 0;
+    
+    socket.emit('entered-sh-page');
 
     if (loggedIn && currentUser != "") {
         $('<p/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
@@ -20,7 +23,7 @@ function setup() {
     }
 
     socket.on('sh-message', function (data) {
-        chat(data.user + ': ' + data.message);
+        chat(data.user + ': ' + data.message, data.c);
     });
     
     socket.on('sh-player-joined', function(data){
@@ -35,6 +38,12 @@ function setup() {
     
     socket.on('sh-failed-join', function(){
         $('<div/>').text("failed to join, already in game").appendTo('#logged-in');
+    });
+    
+    socket.on('show-active-players', function(data){
+        for(var i = 0; i < data.length; i++){
+            $('#players').append('<div id="' + data[i] + '" class="player">' + data[i] + "</div>");
+        }
     });
 
     $('#send').click(function () {
@@ -86,6 +95,6 @@ function setup() {
 }
 
 
-function chat(msg) { //broadcast function
-    $('<div/>').text(msg).appendTo('#log');
+function chat(msg, c) { //broadcast function
+    $('#log').append('<p class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
 }

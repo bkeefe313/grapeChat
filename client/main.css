@@ -50,6 +50,12 @@ nav {
     border: solid black 1px;
 }
 
+.msg {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding: 2px;
+}
+
 button {
     background-color: darkslateblue;
     border: none;

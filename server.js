@@ -15,13 +15,13 @@ const io = socketio(server);
 
 var users = [];
 var shPlayers = [];
-//var userColors = [];
+var userColors = [];
 io.on('connection', (socket) => {
-    console.log('Client connected');
     socket.on('disconnect', () => console.log('Client disconnected'));
 
     socket.on('user-login', function (data) {
         var name = data.t;
+        var color = '#'+Math.floor(Math.random()*16777215).toString(16);
         var u = true;
 
         for (var i = 0; i < users.length; i++) {
@@ -33,21 +33,26 @@ io.on('connection', (socket) => {
 
         if (u) {
             users.push(name); //store user in an array
+            userColors.push(color);
             console.log(name + ' connected\nusers: ' + users.length); //log the connection
             socket.user = data.t;
             socket.emit('validated-login', {
-                name: name
+                name: name,
+                c: color
             });
         }
 
     });
+    
+    socket.on('request-new-color', function(data){
+        userColors[users.indexOf(data)] = '#'+Math.floor(Math.random()*16777215).toString(16);
+    });
 
     socket.on('message', function (data) {
-        genId = generateId();
         var message = {
             user: data.name,
             message: data.t,
-            id: genId
+            c: userColors[users.indexOf(data.name)]
         };
         io.sockets.emit('message', message);
 
@@ -55,19 +60,21 @@ io.on('connection', (socket) => {
     });
     
     socket.on('sh-message', function (data) {
-        genId = generateId();
         var message = {
             user: data.name,
-            message: data.t
+            message: data.t,
+            c: userColors[users.indexOf(data.name)]
         };
         io.emit('sh-message', message);
     });
     
     socket.on('sh-player-joined', function(data){
+        var color = userColors[users.indexOf(data)];
         if(!shPlayers.includes(data)){
             shPlayers.push(data);
             io.emit('sh-player-joined', {
-                name: data
+                name: data,
+                c: color
             });
         } else {
             socket.emit('sh-failed-join');
@@ -80,6 +87,10 @@ io.on('connection', (socket) => {
             name: data
         });
     });
+    
+    socket.on('entered-sh-page', function(){
+        socket.emit('show-active-players', shPlayers);
+    })
 
     socket.on('disconnect', function () {
         if (!socket.user) //make sure socket has a user before proceeding
@@ -91,35 +102,6 @@ io.on('connection', (socket) => {
             console.log(socket.user + 'disconnected\nusers: ' + users.length);
         }
     });
-    
-    /*
-    socket.on('user-login-bypass', function (data) {
-        var name = data.name;
-        socket.emit('validated-login-bypass', {
-            name: name
-        });
-        socket.broadcast.emit('otherUserConnect', {
-            n: name //sends taken name from client back to all clients
-        });
-    });
-    */
-
-    function generateId() {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 5; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        //for (var z = 0; z < idLog.length; z++) {
-        //if (text == idLog[i]) {
-        for (var i = 0; i < 5; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        //} else {
-
-        //}
-        //}
-        return text;
-    }
 });
 
 /*
