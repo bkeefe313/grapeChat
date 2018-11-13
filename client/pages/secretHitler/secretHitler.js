@@ -14,14 +14,16 @@ function setup() {
 
     socket.emit('entered-sh-page');
 
-    if (loggedIn && currentUser != "") {
+    if (loggedIn && currentUser != "" && gameState == false) {
         $('<p/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
         $('#controls').show();
         $('#message').prop("disabled", true);
         $('#play-sh').show();
         $('#send').prop("disabled", true);
-    } else {
+    } else if(gameState == false){
         $('<p/>').text("You are not logged in and cannot play Secret Hitler. To log in, go back to the Chat page.").appendTo('#logged-in');
+    } else if(gameState == true){
+        $('<p/>').text("Game in progress. You cannot play right now.").appendTo('#logged-in');
     }
 
     socket.on('sh-message', function (data) {
@@ -31,6 +33,10 @@ function setup() {
     socket.on('sh-player-joined', function (data) {
         chat(data.name + " has joined the lobby!");
         $('#players').append('<div id="' + data.name + '" class="player">' + data.name + "</div>");
+        
+        if(data.name == currentUser){
+            socket.emit('join-sh-lobby');
+        }
     });
 
     socket.on('sh-player-left', function (data) {
@@ -58,16 +64,22 @@ function setup() {
     });
 
     socket.on('start-sh', function (data) {
-        var i = 5;
+        $('#play-sh').prop('disable', true);
         chat("STARTING GAME WITH " + data + " PLAYERS...", '#ff0000');
-        var int = setInterval(function(){
-            chat(i+'...', '#ff0000'); 
-            if(i!=0)
-                i--;
-            else
-                clearInterval(int);
-        }, 1000);
-        socket.emit('choose-roles');
+    });
+    
+    socket.on('choose-roles', function(data){
+        if(data.h == currentUser){
+            socket.emit('join-sh-hitler');
+            $('#assignment').append('<div class="role">You are Hitler.</div>');
+        }
+        if(data.f.includes(currentUser)){
+            socket.emit('join-sh-fascists');
+            $('#assignment').append('<div class="role">You are a Fascist.</div>');
+        } else if(data.l.includes(currentUser)){
+            socket.emit('join-sh-liberals');
+            $('#assignment').append('<div class="role">You are a Liberal.</div>');
+        }
     });
 
     $('#send').click(function () {
@@ -97,6 +109,7 @@ function setup() {
             $('#leave-sh').prop("disabled", true);
             $('#play-sh').show();
             $('#play-sh').prop("disabled", false);
+            $('#ready-up').hide();
             socket.emit('sh-player-left', currentUser);
         } else {
 

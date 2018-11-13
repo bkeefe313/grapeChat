@@ -16,6 +16,13 @@ var users = [];
 var shPlayers = [];
 var userColors = [];
 var readyPlayers = [];
+
+var numLiberals = 0;
+var numFascists = 0;
+var fascists = [];
+var liberals = [];
+var hitler = '';
+var shGameActive = false;
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
 
@@ -95,8 +102,11 @@ io.on('connection', (socket) => {
         io.emit('sh-ready-up', data);
         if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 1) {
             io.emit('start-sh', readyPlayers.length);
+            io.to('sh-lobby').emit('choose-roles', setRoles());
+            shGameActive = true;
         }
     });
+
 
     socket.on('sh-unready', function (data) {
         readyPlayers.splice(readyPlayers.indexOf(data), 1);
@@ -118,10 +128,105 @@ io.on('connection', (socket) => {
             }
         }
     });
+
+
+    socket.on('choose-roles', function () {
+
+    });
+
+    socket.on('join-sh-lobby', function () {
+        socket.join('sh-lobby');
+    });
+
+    socket.on('join-sh-hitler', function () {
+        socket.join('sh-hitler');
+    });
+
+    socket.on('join-sh-liberals', function () {
+        socket.join('sh-liberals');
+    });
+
+    socket.on('join-sh-fascists', function () {
+        socket.join('sh-fascists');
+    });
+
 });
 
 function draw() {
-    if(readyPlayers < 5){
+    if (readyPlayers < 5) {
         io.emit('abort-sh');
     }
+}
+
+function shuffle(array) {
+    var currentIndex = array.length,
+        temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+function setRoles() {
+    shuffle(shPlayers);
+
+    var hIndex = 0;
+
+    if (shPlayers.length < 5) {
+        numFascists = shPlayers.length;
+    } else if (shPlayers.length == 5) {
+        numFascists = 2;
+        numLiberals = 3
+    } else if (shPlayers.length == 6) {
+        numFascists = 3;
+        numLiberals = 3
+    } else if (shPlayers.length == 7) {
+        numFascists = 3;
+        numLiberals = 4;
+    } else if (shPlayers.length == 8) {
+        numFascists = 3;
+        numLiberals = 5;
+    }
+
+    hitler = shPlayers[hIndex];
+    
+    var i = 0;
+    while(i < shPlayers.length){
+        for (var z = 0; z < numFascists; z++) {
+            fascists.push(shPlayers[i]);
+            console.log("added fascist");
+            i++;
+        }
+        for (var f = 0; f < numLiberals; f++) {
+            liberals.push(shPlayers[i]);
+            console.log("added liberal");
+            i++
+        }
+    }
+
+    var roles = {
+        h: hitler,
+        f: fascists,
+        l: liberals
+    };
+    console.log("chose roles.");
+    console.log("fascists = " + fascists);
+    console.log("liberals = " + liberals);
+    console.log("shPlayers = " + shPlayers);
+    console.log("numFascists = " + numFascists);
+    console.log("numLiberals = " + numLiberals);
+
+    return roles;
+
 }
