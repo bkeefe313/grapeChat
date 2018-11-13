@@ -8,6 +8,7 @@ function setup() {
     $('#play-sh').hide();
     $('#leave-sh').hide();
     $('#ready-up').hide();
+    $('#unready').hide();
     $('#leave-sh').prop("disabled", true);
     msgCount = 0;
     
@@ -48,7 +49,12 @@ function setup() {
     });
     
     socket.on('sh-ready-up', function(data){
-        $('#' + data).css("background-color", "green");
+        $('#' + data).attr('class', 'player-ready');
+        chat(data + ' is ready to start!');
+    });
+    
+    socket.on('sh-unready', function(data){
+        $('#' + data).attr('class', 'player');
     });
 
     $('#send').click(function () {
@@ -109,6 +115,14 @@ function setup() {
     
     $('#ready-up').click(function () {
         socket.emit('sh-ready-up', currentUser);
+        $('#ready-up').hide();
+        $('#unready').show();
+    });
+    
+    $('#unready').click(function () {
+        socket.emit('sh-unready', currentUser);
+        $('#ready-up').show();
+        $('#unready').hide();
     });
 }
 

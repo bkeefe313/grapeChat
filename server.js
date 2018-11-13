@@ -92,6 +92,10 @@ io.on('connection', (socket) => {
     socket.on('sh-ready-up', function(data){
         io.emit('sh-ready-up', data);
     });
+    
+    socket.on('sh-unready', function(data){
+        io.emit('sh-unready', data);
+    });
 
     socket.on('disconnect', function () {
         if (!socket.user) //make sure socket has a user before proceeding
