@@ -30,6 +30,7 @@ function setup() {
     socket.on('sh-message', function (data) {
         console.log('sh-message');
         chat(data.user + ': ' + data.message, data.c);
+        document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
     });
 
     socket.on('sh-player-joined', function (data) {
