@@ -59,10 +59,10 @@ function setup() {
                 setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
                 gameState = false;
             } else if(data.nl < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL LIBERALS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), );
                 gameState = false;
             } else if(data.nf < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL FASCISTS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), );
                 gameState = false;
             }
         }
@@ -133,10 +133,10 @@ function setup() {
                 setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
                 gameState = false;
             } else if(data.nl < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL LIBERALS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), );
                 gameState = false;
             } else if(data.nf < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL FASCISTS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), );
                 gameState = false;
             }
         }

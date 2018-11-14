@@ -174,6 +174,8 @@ io.on('connection', (socket) => {
         }
         shPlayers.splice(0, shPlayers.length);
         readyPlayers.splice(0, readyPlayers.length);
+        liberals.splice(0, liberals.length);
+        fascists.splice(0, fascists.length);
         
         io.emit('reset-sh', reason);
     });
