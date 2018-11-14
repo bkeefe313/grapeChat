@@ -11,7 +11,7 @@ function setup() {
         $('#login').hide();
         $('#logout-button').show();
         $('#new-color').show();
-        $('<a/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
+        $('#logged-in').append('<p class="warning">You are logged in as ' + currentUser + '</div>');
         $('#controls').show();
         $('#message').prop("disabled", false);
         $('#send').prop("disabled", false);
@@ -31,6 +31,7 @@ function setup() {
 
     socket.on('message', function (data) {
         chat(data.user + ': ' + data.message, data.c);
+        document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
     });
 
     socket.on('validated-login', function (data) {
@@ -47,14 +48,14 @@ function setup() {
 
         currentUser = localStorage.getItem("currentUser");
 
-        $('<a/>').text("You are logged in as " + currentUser).appendTo('#logged-in');
+        $('#logged-in').append('<p class="warning">You are logged in as ' + currentUser + '</div>');
     });
 
     socket.on('rejected-login', function (data) {
         $('<div/>').text("Failed login. " + data).appendTo('#logged-in');
     });
-    
-    socket.on('new-color-created', function(data){
+
+    socket.on('new-color-created', function (data) {
         c = data;
     });
 
@@ -78,7 +79,7 @@ function setup() {
             $('<div/>').text("invalid username").appendTo('#logged-in');
         }
     });
-    
+
     $('#new-color').click(function () {
         socket.emit('request-new-color', currentUser);
     });
@@ -101,18 +102,20 @@ function setup() {
             $('#send').click(); //sends message with enter key
         }
     });
+    
 
 }
 
 
-function draw() { //calls constantly
 
+function draw() { //calls constantly
+    
 }
 
 
 function chat(msg, c) { //broadcast function
     $('#log').append('<p class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
-    
+
 }
 
 function generateId() {
@@ -131,3 +134,4 @@ function generateId() {
     //}
     return text;
 }
+

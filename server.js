@@ -23,6 +23,7 @@ var fascists = [];
 var liberals = [];
 var hitler = '';
 var shGameActive = false;
+
 io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
 
@@ -79,7 +80,8 @@ io.on('connection', (socket) => {
             shPlayers.push(data);
             io.emit('sh-player-joined', {
                 name: data,
-                c: color
+                c: color,
+                num: shPlayers.length
             });
         } else {
             socket.emit('sh-failed-join');
@@ -87,14 +89,23 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sh-player-left', function (data) {
+        console.log('player-left');
+        if (readyPlayers.includes(data)) {
+            readyPlayers.splice(readyPlayers.indexOf(data), 1);
+        }
         shPlayers.splice(shPlayers.indexOf(data), 1);
         io.emit('sh-player-left', {
-            name: data
+            name: data,
+            num: shPlayers.length,
+            gs: shGameActive
         });
+        shGameActive = false;
     });
 
     socket.on('entered-sh-page', function () {
         socket.emit('show-active-players', shPlayers);
+        if (shGameActive)
+            socket.emit('sh-in-progress')
     });
 
     socket.on('sh-ready-up', function (data) {
@@ -106,7 +117,6 @@ io.on('connection', (socket) => {
             shGameActive = true;
         }
     });
-
 
     socket.on('sh-unready', function (data) {
         readyPlayers.splice(readyPlayers.indexOf(data), 1);
@@ -125,10 +135,12 @@ io.on('connection', (socket) => {
             if (shPlayers.includes(socket.user)) {
                 io.emit('sh-player-left', socket.user);
                 shPlayers.splice(shPlayers.indexOf(socket.user, 1));
+                if (readyPlayers.includes(data)) {
+                    readyPlayers.splice(readyPlayers.indexOf(data), 1);
+                }
             }
         }
     });
-
 
     socket.on('choose-roles', function () {
 
@@ -150,13 +162,17 @@ io.on('connection', (socket) => {
         socket.join('sh-fascists');
     });
 
+    socket.on('sh-end-game', function () {
+        for (var i = 0; i < shPlayers.length; i++) {
+            io.emit('sh-player-left', shPlayers[i]);
+        }
+        shPlayers.splice(0, shPlayers.length);
+        io.emit('reset-sh');
+    });
+
 });
 
-function draw() {
-    if (readyPlayers < 5) {
-        io.emit('abort-sh');
-    }
-}
+function draw() {}
 
 function shuffle(array) {
     var currentIndex = array.length,
@@ -200,9 +216,9 @@ function setRoles() {
     }
 
     hitler = shPlayers[hIndex];
-    
+
     var i = 0;
-    while(i < shPlayers.length){
+    while (i < shPlayers.length) {
         for (var z = 0; z < numFascists; z++) {
             fascists.push(shPlayers[i]);
             console.log("added fascist");

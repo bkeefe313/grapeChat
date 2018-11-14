@@ -16,6 +16,17 @@ body {
     background-color: darkslateblue;
     padding:5px;
     width:100%;
+    height: 400px;
+    overflow-y: auto;
+}
+
+#logged-in {
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.warning {
+    font-weight: bold;
 }
 
 #controls {
