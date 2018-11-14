@@ -31,7 +31,6 @@ function setup() {
 
     socket.on('message', function (data) {
         chat(data.user + ': ' + data.message, data.c);
-        document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
     });
 
     socket.on('validated-login', function (data) {
@@ -115,7 +114,7 @@ function draw() { //calls constantly
 
 function chat(msg, c) { //broadcast function
     $('#log').append('<p class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
-
+    document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
 }
 
 function generateId() {
