@@ -55,8 +55,14 @@ function setup() {
         chat(data.name + " has left the lobby!");
         $('#' + data.name).remove();
         if (data.h != '') {
-            if ((data.h == data.name || data.nl < 1 || data.nf < 1) && data.gs) {
-                setTimeout(socket.emit('sh-end-game'), );
+            if (data.h == data.name && data.gs) {
+                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
+                gameState = false;
+            } else if(data.nl < 1 && data.gs){
+                setTimeout(socket.emit('sh-end-game', "ALL LIBERALS LEFT,"), );
+                gameState = false;
+            } else if(data.nf < 1 && data.gs){
+                setTimeout(socket.emit('sh-end-game', "ALL FASCISTS LEFT,"), );
                 gameState = false;
             }
         }
