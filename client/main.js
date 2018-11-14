@@ -69,7 +69,7 @@ function setup() {
         console.log('user attempting login');
         var username = $('#username');
         var txt = username.val().trim();
-        if (txt.length > 0 && !txt.includes(' ') && !txt.includes('.') && !txt.charAt(0) == ('_')) {
+        if (txt.length > 0 && !txt.includes(' ') && !txt.includes('.'))) {
             username.prop('disabled', true);
             socket.emit('user-login', {
                 t: txt
