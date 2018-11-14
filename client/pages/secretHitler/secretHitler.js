@@ -55,7 +55,7 @@ function setup() {
         chat(data.name + " has left the lobby!");
         $('#' + data.name).remove();
         if (data.h != '') {
-            if (data.h == data.name && data.gs) {
+            if ((data.h == data.name || data.nl < 1 || data.nf < 1) && data.gs) {
                 setTimeout(socket.emit('sh-end-game'), );
                 gameState = false;
             }
@@ -110,9 +110,9 @@ function setup() {
         }
     });
 
-    socket.on('reset-sh', function () {
+    socket.on('reset-sh', function (data) {
         flushChat();
-        chat("NOT ENOUGH PLAYERS TO CONTINUE, GAME ENDING...", '#ff0000');
+        chat(data +" GAME ENDING...", '#ff0000');
         var int = setInterval(function(){
             location.reload();
             clearInterval(int);
@@ -124,7 +124,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game'), );
+                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
+                gameState = false;
+            } else if(data.nl < 1 && data.gs){
+                setTimeout(socket.emit('sh-end-game', "ALL LIBERALS LEFT,"), );
+                gameState = false;
+            } else if(data.nf < 1 && data.gs){
+                setTimeout(socket.emit('sh-end-game', "ALL FASCISTS LEFT,"), );
                 gameState = false;
             }
         }

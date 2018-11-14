@@ -96,9 +96,10 @@ io.on('connection', (socket) => {
         io.emit('sh-player-left', {
             name: data,
             h: hitler,
-            gs: shGameActive
+            gs: shGameActive,
+            nl: liberal.length,
+            nf: fascists.length
         });
-        shGameActive = false;
     });
 
     socket.on('entered-sh-page', function () {
@@ -165,12 +166,15 @@ io.on('connection', (socket) => {
         socket.join('sh-fascists');
     });
 
-    socket.on('sh-end-game', function () {
+    socket.on('sh-end-game', function (data) {
+        shGameActive = false;
+        var reason = data;
         for (var i = 0; i < shPlayers.length; i++) {
             io.emit('sh-player-left', shPlayers[i]);
         }
         shPlayers.splice(0, shPlayers.length);
-        io.emit('reset-sh');
+        
+        io.emit('reset-sh', reason);
     });
 
 });
