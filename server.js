@@ -97,7 +97,7 @@ io.on('connection', (socket) => {
             name: data,
             h: hitler,
             gs: shGameActive,
-            nl: liberal.length,
+            nl: liberals.length,
             nf: fascists.length
         });
     });
