@@ -26,7 +26,7 @@ function setup() {
     });
 
     socket.on('otherUserDisconnect', function (data) {
-        chat(data + ' disconnected'); //says someone disconnected
+        chat(data.name + ' disconnected'); //says someone disconnected
     });
 
     socket.on('message', function (data) {

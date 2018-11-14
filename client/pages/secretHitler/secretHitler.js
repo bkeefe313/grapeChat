@@ -54,9 +54,8 @@ function setup() {
         console.log('sh-player-left');
         chat(data.name + " has left the lobby!");
         $('#' + data.name).remove();
-        if (data.num != null && data.gs != null) {
-            if (data.num < 5 && data.gs) {
-                chat("NOT ENOUGH PLAYERS TO CONTINUE, ENDING GAME...", red);
+        if (data.h != '') {
+            if (data.h == data.name && data.gs) {
                 setTimeout(socket.emit('sh-end-game'), );
                 gameState = false;
             }
@@ -113,7 +112,22 @@ function setup() {
 
     socket.on('reset-sh', function () {
         flushChat();
-        location.reload();
+        chat("NOT ENOUGH PLAYERS TO CONTINUE, GAME ENDING...", '#ff0000');
+        var int = setInterval(function(){
+            location.reload();
+            clearInterval(int);
+        }, 5000);
+    });
+    
+    socket.on('otherUserDisconnect', function (data) {
+        chat(data.name + " has disconnected from the lobby!");
+        $('#' + data.name).remove();
+        if (data.h != '') {
+            if (data.h == data.name && data.gs) {
+                setTimeout(socket.emit('sh-end-game'), );
+                gameState = false;
+            }
+        }
     });
 
     $('#send').click(function () {
@@ -144,6 +158,8 @@ function setup() {
             $('#play-sh').show();
             $('#play-sh').prop("disabled", false);
             $('#ready-up').hide();
+            if(gameState == true)
+                $('#play-sh').hide();
             socket.emit('sh-player-left', currentUser);
         } else {
 

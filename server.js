@@ -25,7 +25,6 @@ var hitler = '';
 var shGameActive = false;
 
 io.on('connection', (socket) => {
-    socket.on('disconnect', () => console.log('Client disconnected'));
 
     socket.on('user-login', function (data) {
         var name = data.t;
@@ -96,7 +95,7 @@ io.on('connection', (socket) => {
         shPlayers.splice(shPlayers.indexOf(data), 1);
         io.emit('sh-player-left', {
             name: data,
-            num: shPlayers.length,
+            h: hitler,
             gs: shGameActive
         });
         shGameActive = false;
@@ -129,7 +128,11 @@ io.on('connection', (socket) => {
 
         if (users.indexOf(socket.user) > -1) {
             users.splice(users.indexOf(socket.user), 1);
-            socket.broadcast.emit('otherUserDisconnect', socket.user);
+            socket.broadcast.emit('otherUserDisconnect', {
+                name: socket.user,
+                h: hitler,
+                gs: shGameActive
+            });
             console.log(socket.user + 'disconnected\nusers: ' + users.length);
 
             if (shPlayers.includes(socket.user)) {
@@ -171,8 +174,6 @@ io.on('connection', (socket) => {
     });
 
 });
-
-function draw() {}
 
 function shuffle(array) {
     var currentIndex = array.length,
