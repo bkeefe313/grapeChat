@@ -147,7 +147,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('choose-roles', function () {
-
+        io.to('sh-lobby').emit('choose-roles', setRoles());
     });
 
     socket.on('join-sh-lobby', function () {

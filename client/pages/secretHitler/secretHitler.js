@@ -61,10 +61,10 @@ function setup() {
             if (data.h == data.name && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
                 gameState = false;
-            } else if(data.nl < 1 && data.gs){
+            } else if (data.nl < 1 && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
                 gameState = false;
-            } else if(data.nf < 1 && data.gs){
+            } else if (data.nf < 1 && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
                 gameState = false;
             }
@@ -111,30 +111,30 @@ function setup() {
         fascists = data.f;
         if (hitler == currentUser) {
             socket.emit('join-sh-hitler');
-            $('#assignment').append('<div class="role">You are Khomeini, and a Fanatic.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 fanatic policies or be elected as Ayatollah after 3 fanatic policies are enacted.</div>');
-        }else if (fascists.includes(currentUser)) {
+            $('#assignment').append('<div class="role">You are Khomeini, and a Traditionalist.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 traditionalist policies or be chosen as Ayatollah after 3 traditionalist policies are enacted.</div>');
+        } else if (fascists.includes(currentUser)) {
             socket.emit('join-sh-fascists');
-            $('#assignment').append('<div class="role">You are a Fanatic.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 fanatic policies or to elect Khomeini after 3 fanatic policies are enacted.</div>');
+            $('#assignment').append('<div class="role">You are a Traditionalist.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 traditionalist policies or to elect Khomeini after 3 traditionalist policies are enacted.</div>');
         } else if (liberals.includes(currentUser)) {
             socket.emit('join-sh-liberals');
             $('#assignment').append('<div class="role">You are a Progressive.</div>');
             $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
         }
-        
-        
+
+
     });
 
     socket.on('reset-sh', function (data) {
         flushChat();
-        chat(data +" GAME ENDING...", '#ff0000');
-        var int = setInterval(function(){
+        chat(data + " GAME ENDING...", '#ff0000');
+        var int = setInterval(function () {
             location.reload();
             clearInterval(int);
         }, 5000);
     });
-    
+
     socket.on('otherUserDisconnect', function (data) {
         chat(data.name + " has disconnected from the lobby!");
         $('#' + data.name).remove();
@@ -142,10 +142,10 @@ function setup() {
             if (data.h == data.name && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
                 gameState = false;
-            } else if(data.nl < 1 && data.gs){
+            } else if (data.nl < 1 && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
                 gameState = false;
-            } else if(data.nf < 1 && data.gs){
+            } else if (data.nf < 1 && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
                 gameState = false;
             }
@@ -180,7 +180,7 @@ function setup() {
             $('#play-sh').show();
             $('#play-sh').prop("disabled", false);
             $('#ready-up').hide();
-            if(gameState == true)
+            if (gameState == true)
                 $('#play-sh').hide();
             socket.emit('sh-player-left', currentUser);
         } else {
@@ -222,11 +222,16 @@ function setup() {
         $('#ready-up').show();
         $('#unready').hide();
     });
-    
-    $('#purge-sh').click(function(){
-        setTimeout(socket.emit('sh-end-game', "GAME PURGED,"), 5000);
-        gameState = false;
+
+    $('#purge-sh').click(function () {
+        var input = $('#purge-password');
+        var text = input.val().trim();
+        if (text == "purge13") {
+            setTimeout(socket.emit('sh-end-game', "GAME PURGED,"), 5000);
+            gameState = false;
+        }
     });
+    
 }
 
 
@@ -235,7 +240,7 @@ function chat(msg, c) { //broadcast function
         $('#log').append('<div class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
     else
         $('#log').append('<p>' + msg + '</p>');
-    
+
     document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
 }
 
