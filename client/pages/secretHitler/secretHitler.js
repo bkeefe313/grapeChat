@@ -100,14 +100,14 @@ function setup() {
         console.log('sh-choose-roles');
         if (data.h == currentUser) {
             socket.emit('join-sh-hitler');
-            $('#assignment').append('<div class="role">You are Hitler.</div>');
+            $('#assignment').append('<div class="role">You are Khomeini.</div>');
         }
         if (data.f.includes(currentUser)) {
             socket.emit('join-sh-fascists');
-            $('#assignment').append('<div class="role">You are a Fascist.</div>');
+            $('#assignment').append('<div class="role">You are a Fanatic.</div>');
         } else if (data.l.includes(currentUser)) {
             socket.emit('join-sh-liberals');
-            $('#assignment').append('<div class="role">You are a Liberal.</div>');
+            $('#assignment').append('<div class="role">You are a Progressive.</div>');
         }
     });
 
