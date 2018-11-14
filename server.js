@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
         var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
         var u = true;
 
-        u = users.includes(name);
+        u = users.includes(name) || shPlayers.includes(name);
 
         if (!u) {
             users.push(name); //store user in an array
