@@ -1,7 +1,7 @@
 var socket = io();
 var loggedIn = localStorage.getItem("loggedIn");
 var currentUser = localStorage.getItem("currentUser");
-var inGame = false;
+//var inGame = false;
 var gameState = false;
 
 function setup() {
@@ -36,7 +36,7 @@ function setup() {
         console.log('sh-player-joined');
         chat(data.name + " has joined the lobby!");
         $('#players').append('<div id="' + data.name + '" class="player">' + data.name + "</div>");
-        if (inGame) {
+        if (data.name == currentUser) {
             $('#ready-up').show();
         }
         if (data.name == currentUser) {
@@ -182,7 +182,7 @@ function setup() {
             $('#play-sh').prop("disabled", true);
             $('#leave-sh').show();
             $('#leave-sh').prop("disabled", false);
-            inGame = true;
+            //inGame = true;
             socket.emit('sh-player-joined', currentUser);
         } else {
 
