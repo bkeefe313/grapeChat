@@ -3,6 +3,9 @@ var loggedIn = localStorage.getItem("loggedIn");
 var currentUser = localStorage.getItem("currentUser");
 //var inGame = false;
 var gameState = false;
+var liberals = [];
+var fascists = [];
+var hitler = '';
 
 function setup() {
     $('#controls').hide();
@@ -103,17 +106,24 @@ function setup() {
 
     socket.on('choose-roles', function (data) {
         console.log('sh-choose-roles');
-        if (data.h == currentUser) {
+        hitler = data.h;
+        liberals = data.l;
+        fascists = data.f;
+        if (hitler == currentUser) {
             socket.emit('join-sh-hitler');
-            $('#assignment').append('<div class="role">You are Khomeini.</div>');
-        }
-        if (data.f.includes(currentUser)) {
+            $('#assignment').append('<div class="role">You are Khomeini, and a Fanatic.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 fanatic policies or be elected as Ayatollah after 3 fanatic policies are enacted.</div>');
+        }else if (fascists.includes(currentUser)) {
             socket.emit('join-sh-fascists');
             $('#assignment').append('<div class="role">You are a Fanatic.</div>');
-        } else if (data.l.includes(currentUser)) {
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 fanatic policies or to elect Khomeini after 3 fanatic policies are enacted.</div>');
+        } else if (liberals.includes(currentUser)) {
             socket.emit('join-sh-liberals');
             $('#assignment').append('<div class="role">You are a Progressive.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
         }
+        
+        
     });
 
     socket.on('reset-sh', function (data) {
