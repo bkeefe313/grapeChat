@@ -76,7 +76,7 @@ function setup() {
                 t: txt
             });
         } else {
-            $('<div/>').text("invalid username").appendTo('#logged-in');
+            $('<div/>').text("invalid username, no spaces allowed").appendTo('#logged-in');
         }
     });
 
