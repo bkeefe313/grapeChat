@@ -93,6 +93,12 @@ io.on('connection', (socket) => {
         if (readyPlayers.includes(data)) {
             readyPlayers.splice(readyPlayers.indexOf(data), 1);
         }
+        if (liberals.includes(data)) {
+            liberals.splice(liberals.indexOf(data), 1);
+        }
+        if (fascists.includes(data)) {
+            fascists.splice(fascists.indexOf(data), 1);
+        }
         shPlayers.splice(shPlayers.indexOf(data), 1);
         io.emit('sh-player-left', {
             name: data,
