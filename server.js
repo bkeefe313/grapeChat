@@ -77,6 +77,7 @@ io.on('connection', (socket) => {
 
         if (!shPlayers.includes(data)) {
             shPlayers.push(data);
+            readyPlayers.splice(readyPlayers.indexOf(data), 1);
             io.emit('sh-player-joined', {
                 name: data,
                 c: color,

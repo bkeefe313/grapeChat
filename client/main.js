@@ -69,13 +69,13 @@ function setup() {
         console.log('user attempting login');
         var username = $('#username');
         var txt = username.val().trim();
-        if (txt.length > 0 && !txt.includes(' ')) {
+        if (txt.length > 0 && !txt.includes(' ') && !txt.includes('.') && !txt.charAt(0).equals('_')) {
             username.prop('disabled', true);
             socket.emit('user-login', {
                 t: txt
             });
         } else {
-            $('<div/>').text("invalid username, no spaces allowed").appendTo('#logged-in');
+            $('<div/>').text("invalid username, no spaces or periods, and first character must be a letter").appendTo('#logged-in');
         }
     });
 
