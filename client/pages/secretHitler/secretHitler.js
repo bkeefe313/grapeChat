@@ -59,13 +59,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
                 gameState = false;
             } else if(data.nl < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
                 gameState = false;
             } else if(data.nf < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
                 gameState = false;
             }
         }
@@ -140,13 +140,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
                 gameState = false;
             } else if(data.nl < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
                 gameState = false;
             } else if(data.nf < 1 && data.gs){
-                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), );
+                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
                 gameState = false;
             }
         }
@@ -221,6 +221,11 @@ function setup() {
         socket.emit('sh-unready', currentUser);
         $('#ready-up').show();
         $('#unready').hide();
+    });
+    
+    $('#purge-sh').click(function(){
+        setTimeout(socket.emit('sh-end-game', "GAME PURGED,"), 5000);
+        gameState = false;
     });
 }
 
