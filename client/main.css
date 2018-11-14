@@ -38,6 +38,7 @@ body {
 }
 
 input {
+    font-family: monospace;
     background-color: darkslateblue;
     color: aliceblue;
     padding: 5px 5px;
@@ -68,6 +69,7 @@ nav {
 }
 
 button {
+    font-family: monospace;
     background-color: darkslateblue;
     border: none;
     color: white;
