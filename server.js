@@ -173,6 +173,7 @@ io.on('connection', (socket) => {
             io.emit('sh-player-left', shPlayers[i]);
         }
         shPlayers.splice(0, shPlayers.length);
+        readyPlayers.splice(0, readyPlayers.length);
         
         io.emit('reset-sh', reason);
     });
