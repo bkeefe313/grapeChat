@@ -103,7 +103,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('entered-sh-page', function () {
-        socket.emit('show-active-players', shPlayers);
+        socket.emit('show-active-players', {
+            p: shPlayers,
+            rp: readyPlayers
+        });
         if (shGameActive)
             socket.emit('sh-in-progress')
     });
@@ -208,7 +211,8 @@ function setRoles() {
     var hIndex = 0;
 
     if (shPlayers.length < 5) {
-        numFascists = shPlayers.length;
+        numFascists = shPlayers.length/2;
+        numLiberals = shPlayers.length - numFascists;
     } else if (shPlayers.length == 5) {
         numFascists = 2;
         numLiberals = 3

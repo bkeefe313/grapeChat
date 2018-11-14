@@ -78,10 +78,12 @@ function setup() {
 
     socket.on('show-active-players', function (data) {
         console.log('sh-show-active-players');
-        for (var i = 0; i < data.length; i++) {
-            $('#players').append('<div id="' + data[i] + '" class="player">' + data[i] + "</div>");
+        for (var i = 0; i < data.p.length; i++) {
+            $('#players').append('<div id="' + data.p[i] + '" class="player">' + data.p[i] + "</div>");
+            if(data.rp.includes(data.p[i])){
+                $('#' + data.p[i]).attr('class', 'player-ready');
+            }
         }
-
     });
 
     socket.on('sh-ready-up', function (data) {
