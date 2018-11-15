@@ -23,6 +23,7 @@ var fascists = [];
 var liberals = [];
 var hitler = '';
 var shGameActive = false;
+var president = '';
 
 io.on('connection', (socket) => {
 
@@ -157,7 +158,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('choose-roles', function () {
-        io.to('sh-lobby').emit('choose-roles', setRoles());
+        if(!shGameActive)
+            io.to('sh-lobby').emit('choose-roles', setRoles());
+        shGameActive = true;
     });
 
     socket.on('join-sh-lobby', function () {
@@ -188,6 +191,10 @@ io.on('connection', (socket) => {
         fascists.splice(0, fascists.length);
         
         io.emit('reset-sh', reason);
+    });
+    
+    socket.on('sh-next-turn', function(){
+        
     });
 
 });
@@ -254,8 +261,11 @@ function setRoles() {
         h: hitler,
         f: fascists,
         l: liberals,
-        p: shPlayers
+        p: shPlayers,
+        pres: shPlayers[Math.floor(Math.random(0, shPlayers.length))]
     };
+    
+    president = roles.pres;
     console.log("chose roles.");
     console.log("fascists = " + fascists);
     console.log("liberals = " + liberals);

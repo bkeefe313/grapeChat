@@ -126,6 +126,8 @@ function setup() {
             $('#assignment').append('<div class="role">You are a Progressive.</div>');
             $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
         }
+        console.log(data.pres);
+        $('#'+data.pres).css('border', 'solid blue 2px');
         showRoles();
     });
 
