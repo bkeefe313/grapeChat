@@ -253,7 +253,8 @@ function setRoles() {
     var roles = {
         h: hitler,
         f: fascists,
-        l: liberals
+        l: liberals,
+        p: shPlayers
     };
     console.log("chose roles.");
     console.log("fascists = " + fascists);

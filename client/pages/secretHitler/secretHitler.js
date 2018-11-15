@@ -5,6 +5,7 @@ var currentUser = localStorage.getItem("currentUser");
 var gameState = false;
 var liberals = [];
 var fascists = [];
+var players = [];
 var hitler = '';
 
 function setup() {
@@ -80,7 +81,7 @@ function setup() {
         console.log('sh-show-active-players');
         for (var i = 0; i < data.p.length; i++) {
             $('#players').append('<div id="' + data.p[i] + '" class="player">' + data.p[i] + "</div>");
-            if(data.rp.includes(data.p[i])){
+            if (data.rp.includes(data.p[i])) {
                 $('#' + data.p[i]).attr('class', 'player-ready');
             }
         }
@@ -111,6 +112,7 @@ function setup() {
         hitler = data.h;
         liberals = data.l;
         fascists = data.f;
+        players = data.p;
         if (hitler == currentUser) {
             socket.emit('join-sh-hitler');
             $('#assignment').append('<div class="role">You are Khomeini, and a Traditionalist.</div>');
@@ -124,8 +126,7 @@ function setup() {
             $('#assignment').append('<div class="role">You are a Progressive.</div>');
             $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
         }
-
-
+        showRoles();
     });
 
     socket.on('reset-sh', function (data) {
@@ -233,7 +234,7 @@ function setup() {
             gameState = false;
         }
     });
-    
+
 }
 
 
@@ -249,4 +250,33 @@ function chat(msg, c) { //broadcast function
 function flushChat() {
     $('#log').remove();
     $('#chat').append('<div id="log"></div>');
+}
+
+function showRoles() {
+    var numPlayers = players.length;
+    if (numPlayers <= 6) {
+        if (fascists.includes(currentUser)) {
+            for (var i = 0; i < fascists.length; i++) {
+                if (fascists[i] != hitler) {
+                    $('#' + fascists[i]).html(fascists[i] + ': Traditionalist');
+                } else {
+                    $('#' + fascists[i]).html(fascists[i] + ': Khomeini');
+                }
+            }
+        }
+    } else if (numPlayers > 6) {
+        if (fascists.includes(currentUser) && currentUser != hitler) {
+            for (var i = 0; i < fascists.length; i++) {
+                if (fascists[i] != hitler) {
+                    $('#' + fascists[i]).html(fascists[i] + ': Traditionalist');
+                } else {
+                    $('#' + fascists[i]).html(fascists[i] + ': Khomeini');
+                }
+            }
+        }
+    }
+    
+    for(var i = 0; i < numPlayers; i++){
+        $('#' + players[i]).attr('class', 'player');
+    }
 }
