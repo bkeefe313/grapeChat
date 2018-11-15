@@ -45,6 +45,9 @@ function setup() {
         console.log('sh-player-joined');
         chat(data.name + " has joined the lobby!");
         $('#players').append('<button id="' + data.name + '" class="player">' + data.name + "</button>");
+        for(var i = 0; i < data.rp.length; i++){
+            $('#' + data.rp[i]).attr('class', 'player-ready');
+        }
         if (data.name == currentUser) {
             $('#ready-up').show();
         }
@@ -142,6 +145,7 @@ function setup() {
     socket.on('reset-sh', function (data) {
         flushChat();
         chat(data + " GAME ENDING...", '#ff0000');
+        resetVars();
         var int = setInterval(function () {
             location.reload();
             clearInterval(int);
@@ -344,4 +348,16 @@ function chat(msg, c) { //broadcast function
         $('#log').append('<p>' + msg + '</p>');
 
     document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+}
+
+function resetVars() {
+    gameState = false;
+    liberals = [];
+    fascists = [];
+    players = [];
+    hitler = '';
+    choosingChancellor = false;
+    voting = false;
+    president = '';
+    chancellor = '';
 }

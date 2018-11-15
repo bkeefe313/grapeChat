@@ -82,11 +82,13 @@ io.on('connection', (socket) => {
 
         if (!shPlayers.includes(data)) {
             shPlayers.push(data);
-            readyPlayers.splice(readyPlayers.indexOf(data), 1);
+            if(readyPlayers.includes(data))
+                readyPlayers.splice(readyPlayers.indexOf(data), 1);
             io.emit('sh-player-joined', {
                 name: data,
                 c: color,
-                num: shPlayers.length
+                num: shPlayers.length,
+                rp: readyPlayers
             });
         } else {
             socket.emit('sh-failed-join');
@@ -189,10 +191,10 @@ io.on('connection', (socket) => {
         for (var i = 0; i < shPlayers.length; i++) {
             io.emit('sh-player-left', shPlayers[i]);
         }
-        shPlayers.splice(0, shPlayers.length);
-        readyPlayers.splice(0, readyPlayers.length);
-        liberals.splice(0, liberals.length);
-        fascists.splice(0, fascists.length);
+        shPlayers = [];
+        readyPlayers = [];
+        liberals = [];
+        fascists = [];
 
         io.emit('reset-sh', reason);
     });
