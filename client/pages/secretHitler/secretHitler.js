@@ -1,6 +1,12 @@
 var socket = io();
 var loggedIn = localStorage.getItem("loggedIn");
 var currentUser = localStorage.getItem("currentUser");
+var nameOfHitler = 'Khomeini';
+var nameOfChancellor = 'Ayatollah';
+var nameOfPresident = 'Shah';
+var nameOfFascists = 'Traditionalist';
+var nameOfLiberals = 'Progressive';
+
 //var inGame = false;
 var gameState = false;
 var liberals = [];
@@ -68,13 +74,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', nameOfHitler +" left,"), 5000);
                 gameState = false;
             } else if (data.nl < 1 && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', "ALL " + nameOfLiberals + "s LEFT,"), 5000);
                 gameState = false;
             } else if (data.nf < 1 && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', "ALL "+ nameOfFascists + "s LEFT,"), 5000);
                 gameState = false;
             }
         }
@@ -123,16 +129,16 @@ function setup() {
         players = data.p;
         if (hitler == currentUser) {
             socket.emit('join-sh-hitler');
-            $('#assignment').append('<div class="role">You are Khomeini, and a Traditionalist.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 traditionalist policies or be chosen as Ayatollah after 3 traditionalist policies are enacted.</div>');
+            $('#assignment').append('<div class="role">You are' + nameOfHitler + ', and a ' + nameOfFascists + '.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or be elected as' + nameOfChancellor + 'after 3 ' + nameOfFascists + ' policies are enacted.</div>');
         } else if (fascists.includes(currentUser)) {
             socket.emit('join-sh-fascists');
-            $('#assignment').append('<div class="role">You are a Traditionalist.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 traditionalist policies or to elect Khomeini after 3 traditionalist policies are enacted.</div>');
+            $('#assignment').append('<div class="role">You are a ' + nameOfFascists + '.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or to elect' + nameOfHitler + ' as ' + nameOfChancellor + ' after 3 ' + nameOfFascists + 'policies are enacted.</div>');
         } else if (liberals.includes(currentUser)) {
             socket.emit('join-sh-liberals');
-            $('#assignment').append('<div class="role">You are a Progressive.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
+            $('#assignment').append('<div class="role">You are a' + nameOfLiberals + '.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 5 ' + nameOfLiberals + ' policies or to assassinate' + nameOfHitler + '.</div>');
         }
         console.log(data.pres);
         $('#' + data.pres).css('border', 'solid cyan 2px');
@@ -157,13 +163,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "KHOMEINI LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', nameOfHitler + " left,"), 5000);
                 gameState = false;
             } else if (data.nl < 1 && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "ALL PROGRESSIVES LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', "ALL " + nameOfLiberals + "s left,"), 5000);
                 gameState = false;
             } else if (data.nf < 1 && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "ALL FANATICS LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', "ALL " + nameOfFascists + "s left,"), 5000);
                 gameState = false;
             }
         }
@@ -173,7 +179,7 @@ function setup() {
         console.log('#' + data.c);
         console.log($('#' + data.c));
         $('#' + data.c).css('border', 'solid red 2px');
-        chat(data.c + " has been nominated as Ayatollah.", 'cyan');
+        chat(data.c + " has been nominated as" + nameOfChancellor + ".", 'cyan');
         chat("Vote for whether or not you support this government.", 'cyan');
         $('#voting').show();
     });
@@ -187,13 +193,13 @@ function setup() {
     });
 
     socket.on('voting-failed', function (data) {
-        chat("The election failed. The next presidential nominee is " + data.presNom);
+        chat("The election failed. The next nominee for " + nameOfPresident + " is " + data.presNom);
     });
 
     socket.on('voting-passed', function (data) {
         president = data.pres;
         chancellor = data.chan;
-        chat("The election was successful. " + president + " is the new president and " + chancellor + " is the new Ayatollah.", 'cyan');
+        chat("The election was successful. " + president + " is the new " + nameOfPresident + " and " + chancellor + " is the new " + nameOfChancellor + ".", 'cyan');
         if (president == currentUser) {
             socket.emit('action-phase');
         }
@@ -313,9 +319,9 @@ function showRoles() {
         if (fascists.includes(currentUser)) {
             for (var i = 0; i < fascists.length; i++) {
                 if (fascists[i] != hitler) {
-                    $('#' + fascists[i]).html(fascists[i] + ': Traditionalist');
+                    $('#' + fascists[i]).html(fascists[i] + ': ' nameOfFascists);
                 } else {
-                    $('#' + fascists[i]).html(fascists[i] + ': Khomeini');
+                    $('#' + fascists[i]).html(fascists[i] + ': ' + nameOfHitler);
                 }
             }
         }
@@ -323,9 +329,9 @@ function showRoles() {
         if (fascists.includes(currentUser) && currentUser != hitler) {
             for (var i = 0; i < fascists.length; i++) {
                 if (fascists[i] != hitler) {
-                    $('#' + fascists[i]).html(fascists[i] + ': Traditionalist');
+                    $('#' + fascists[i]).html(fascists[i] + ': ' nameOfFascists);
                 } else {
-                    $('#' + fascists[i]).html(fascists[i] + ': Khomeini');
+                    $('#' + fascists[i]).html(fascists[i] + ': ' nameOfHitler);
                 }
             }
         }
@@ -337,7 +343,7 @@ function showRoles() {
 }
 
 function nominateChancellor() {
-    chat("You are the president. Choose a chancellor candidate.", 'cyan');
+    chat("You are the " + nameOfPresident. + " Choose a " + nameOfChancellor + " candidate.", 'cyan');
     choosingChancellor = true;
 }
 

@@ -325,5 +325,8 @@ function setRoles() {
 
 function nextPresident(){
     var index = shPlayers.indexOf(president);
-    return shPlayers[index + 1];
+    if(index == shPlayers.length - 1)
+        return shPlayers[0];
+    else
+        return shPlayers[index + 1];
 }
