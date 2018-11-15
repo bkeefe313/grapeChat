@@ -19,7 +19,7 @@ function setup() {
     $('#ready-up').hide();
     $('#unready').hide();
     $('#leave-sh').prop("disabled", true);
-    //$('#voting').hide();
+    $('#voting').hide();
 
     socket.emit('entered-sh-page');
 
@@ -170,7 +170,8 @@ function setup() {
         console.log($('#' + data.c));
         $('#' + data.c).css('border', 'solid red 2px');
         chat(data.c + " has been nominated as Ayatollah.", 'cyan');
-        
+        chat("Vote for whether or not you support this government.", 'cyan');
+        $('#voting').show();
     });
 
     socket.on('yes-for-gov', function (data) {
@@ -336,13 +337,9 @@ function nominateChancellor() {
     choosingChancellor = true;
 }
 
-function castVotesPC(pres, chan) {
-    $('#voting').show();
-}
-
 function chat(msg, c) { //broadcast function
     if (c)
-        $('#log').append('<div class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
+        $('#log').append('<div class="msg" style="border: solid ' + c + ' 3px">' + msg + '</div>');
     else
         $('#log').append('<p>' + msg + '</p>');
 
