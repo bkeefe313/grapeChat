@@ -8,6 +8,9 @@ var fascists = [];
 var players = [];
 var hitler = '';
 var choosingChancellor = false;
+var voting = false;
+var president = '';
+var chancellor = '';
 
 function setup() {
     $('#controls').hide();
@@ -16,6 +19,7 @@ function setup() {
     $('#ready-up').hide();
     $('#unready').hide();
     $('#leave-sh').prop("disabled", true);
+    //$('#voting').hide();
 
     socket.emit('entered-sh-page');
 
@@ -40,7 +44,7 @@ function setup() {
     socket.on('sh-player-joined', function (data) {
         console.log('sh-player-joined');
         chat(data.name + " has joined the lobby!");
-        $('#players').append('<div id="' + data.name + '" class="player">' + data.name + "</div>");
+        $('#players').append('<button id="' + data.name + '" class="player">' + data.name + "</button>");
         if (data.name == currentUser) {
             $('#ready-up').show();
         }
@@ -160,9 +164,34 @@ function setup() {
             }
         }
     });
-    
-    socket.on('chancellor-nominated', function(data){
-        $('#' + data).css('border', 'solid red 2px');
+
+    socket.on('chancellor-nominated', function (data) {
+        console.log('#' + data.c);
+        console.log($('#' + data.c));
+        $('#' + data.c).css('border', 'solid red 2px');
+        chat(data.c + " has been nominated as Ayatollah.", 'cyan');
+        
+    });
+
+    socket.on('yes-for-gov', function (data) {
+        chat(data + " voted FOR this government.", 'green');
+    });
+
+    socket.on('no-for-gov', function (data) {
+        chat(data + " voted AGAINST this government.", 'red');
+    });
+
+    socket.on('voting-failed', function (data) {
+        chat("The election failed. The next presidential nominee is " + data.presNom);
+    });
+
+    socket.on('voting-passed', function (data) {
+        president = data.pres;
+        chancellor = data.chan;
+        chat("The election was successful. " + president + " is the new president and " + chancellor + " is the new Ayatollah.", 'cyan');
+        if (president == currentUser) {
+            socket.emit('action-phase');
+        }
     });
 
     $('#send').click(function () {
@@ -245,18 +274,28 @@ function setup() {
             gameState = false;
         }
     });
-    
-    $('.player').click(function(){
-        console.log('clicked player');
-        if(choosingChancellor && $(this).text() != currentUser){
-            socket.emit('chancellor-nominated', $(this).text());
-        }
+
+    $('#gov-yes').click(function () {
+        socket.emit('yes-for-gov', currentUser);
+        $('#voting').hide();
     });
 
+    $('#gov-no').click(function () {
+        socket.emit('no-for-gov', currentUser);
+        $('#voting').hide();
+    });
 }
 
-
-
+function draw() {
+    $('.player').click(function () {
+        var text = $(this).attr('id');
+        if (choosingChancellor && text != currentUser) {
+            console.log('player clicked');
+            socket.emit('chancellor-nominated', text);
+            choosingChancellor = false;
+        }
+    });
+}
 
 function flushChat() {
     $('#log').remove();
@@ -295,6 +334,10 @@ function showRoles() {
 function nominateChancellor() {
     chat("You are the president. Choose a chancellor candidate.", 'cyan');
     choosingChancellor = true;
+}
+
+function castVotesPC(pres, chan) {
+    $('#voting').show();
 }
 
 function chat(msg, c) { //broadcast function

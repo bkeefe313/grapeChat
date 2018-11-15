@@ -24,7 +24,10 @@ var liberals = [];
 var hitler = '';
 var shGameActive = false;
 var president = '';
+var chancellor = '';
 var undesirables = [];
+var votesForGov = 0;
+var votesAgainstGov = 0;
 
 io.on('connection', (socket) => {
 
@@ -159,7 +162,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('choose-roles', function () {
-        if(!shGameActive)
+        if (!shGameActive)
             io.to('sh-lobby').emit('choose-roles', setRoles());
         shGameActive = true;
     });
@@ -190,16 +193,52 @@ io.on('connection', (socket) => {
         readyPlayers.splice(0, readyPlayers.length);
         liberals.splice(0, liberals.length);
         fascists.splice(0, fascists.length);
-        
+
         io.emit('reset-sh', reason);
     });
-    
-    socket.on('chancellor-nominated', function(data){
-        io.emit('chancellor-nominated', data);
+
+    socket.on('chancellor-nominated', function (data) {
+        chancellor = data;
+        io.emit('chancellor-nominated', {
+            c: chancellor,
+            p: president
+        });
     })
-    
-    socket.on('sh-next-turn', function(){
+
+    socket.on('yes-for-gov', function (data) {
+        votesForGov++;
+        io.emit('yes-for-gov', data);
+
+        if (votesAgainstGov + votesForGov == shPlayers.length) {
+            if (votesAgainstGov >= votesForGov) {
+                io.emit('voting-failed', {
+                    presNom: nextPresident()
+                });
+            } else if(votesForGov > votesAgainstGov){
+                io.emit('voting-passed', {
+                    pres: president,
+                    chan: chancellor
+                });
+            }
+        }
+    });
+
+    socket.on('no-for-gov', function (data) {
+        votesAgainstGov++;
+        io.emit('no-for-gov', data);
         
+        if (votesAgainstGov + votesForGov == shPlayers.length) {
+            if (votesAgainstGov >= votesForGov) {
+                io.emit('voting-failed', {
+                    presNom: nextPresident()
+                });
+            } else if(votesForGov > votesAgainstGov){
+                io.emit('voting-passed', {
+                    pres: president,
+                    chan: chancellor
+                });
+            }
+        }
     });
 
 });
@@ -230,7 +269,7 @@ function setRoles() {
     var hIndex = 0;
 
     if (shPlayers.length < 5) {
-        numFascists = shPlayers.length/2;
+        numFascists = shPlayers.length / 2;
         numLiberals = shPlayers.length - numFascists;
     } else if (shPlayers.length == 5) {
         numFascists = 2;
@@ -267,9 +306,9 @@ function setRoles() {
         f: fascists,
         l: liberals,
         p: shPlayers,
-        pres: shPlayers[Math.floor(Math.random(0, shPlayers.length))]
+        pres: shPlayers[Math.floor(Math.random() * (shPlayers.length))]
     };
-    
+
     president = roles.pres;
     console.log("chose roles.");
     console.log("fascists = " + fascists);
@@ -280,4 +319,9 @@ function setRoles() {
 
     return roles;
 
+}
+
+function nextPresident(){
+    var index = shPlayers.indexOf(president);
+    return shPlayers[index + 1];
 }
