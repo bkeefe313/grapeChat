@@ -319,7 +319,7 @@ function showRoles() {
         if (fascists.includes(currentUser)) {
             for (var i = 0; i < fascists.length; i++) {
                 if (fascists[i] != hitler) {
-                    $('#' + fascists[i]).html(fascists[i] + ': ' nameOfFascists);
+                    $('#' + fascists[i]).html(fascists[i] + ': ' + nameOfFascists);
                 } else {
                     $('#' + fascists[i]).html(fascists[i] + ': ' + nameOfHitler);
                 }
