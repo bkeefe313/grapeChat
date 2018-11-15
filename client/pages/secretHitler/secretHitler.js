@@ -183,6 +183,7 @@ function setup() {
             $('#play-sh').show();
             $('#play-sh').prop("disabled", false);
             $('#ready-up').hide();
+            $('#unready').hide();
             if (gameState == true)
                 $('#play-sh').hide();
             socket.emit('sh-player-left', currentUser);
