@@ -7,6 +7,7 @@ var liberals = [];
 var fascists = [];
 var players = [];
 var hitler = '';
+var choosingChancellor = false;
 
 function setup() {
     $('#controls').hide();
@@ -127,8 +128,11 @@ function setup() {
             $('#assignment').append('<div class="guide">Your goal is to enact 5 progressive policies or to assassinate Khomeini.</div>');
         }
         console.log(data.pres);
-        $('#'+data.pres).css('border', 'solid blue 2px');
+        $('#' + data.pres).css('border', 'solid cyan 2px');
         showRoles();
+        if (data.pres == currentUser) {
+            nominateChancellor();
+        }
     });
 
     socket.on('reset-sh', function (data) {
@@ -155,6 +159,10 @@ function setup() {
                 gameState = false;
             }
         }
+    });
+    
+    socket.on('chancellor-nominated', function(data){
+        $('#' + data).css('border', 'solid red 2px');
     });
 
     $('#send').click(function () {
@@ -237,18 +245,18 @@ function setup() {
             gameState = false;
         }
     });
+    
+    $('.player').click(function(){
+        console.log('clicked player');
+        if(choosingChancellor && $(this).text() != currentUser){
+            socket.emit('chancellor-nominated', $(this).text());
+        }
+    });
 
 }
 
 
-function chat(msg, c) { //broadcast function
-    if (c)
-        $('#log').append('<div class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
-    else
-        $('#log').append('<p>' + msg + '</p>');
 
-    document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
-}
 
 function flushChat() {
     $('#log').remove();
@@ -278,8 +286,22 @@ function showRoles() {
             }
         }
     }
-    
-    for(var i = 0; i < numPlayers; i++){
+
+    for (var i = 0; i < numPlayers; i++) {
         $('#' + players[i]).attr('class', 'player');
     }
+}
+
+function nominateChancellor() {
+    chat("You are the president. Choose a chancellor candidate.", 'cyan');
+    choosingChancellor = true;
+}
+
+function chat(msg, c) { //broadcast function
+    if (c)
+        $('#log').append('<div class="msg" style="border: solid' + c + ' 3px">' + msg + '</div>');
+    else
+        $('#log').append('<p>' + msg + '</p>');
+
+    document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
 }

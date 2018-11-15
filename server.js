@@ -24,6 +24,7 @@ var liberals = [];
 var hitler = '';
 var shGameActive = false;
 var president = '';
+var undesirables = [];
 
 io.on('connection', (socket) => {
 
@@ -192,6 +193,10 @@ io.on('connection', (socket) => {
         
         io.emit('reset-sh', reason);
     });
+    
+    socket.on('chancellor-nominated', function(data){
+        io.emit('chancellor-nominated', data);
+    })
     
     socket.on('sh-next-turn', function(){
         
