@@ -343,7 +343,7 @@ function showRoles() {
 }
 
 function nominateChancellor() {
-    chat("You are the " + nameOfPresident. + " Choose a " + nameOfChancellor + " candidate.", 'cyan');
+    chat("You are the " + nameOfPresident + " Choose a " + nameOfChancellor + " candidate.", 'cyan');
     choosingChancellor = true;
 }
 
