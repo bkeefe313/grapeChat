@@ -51,7 +51,7 @@ function setup() {
         console.log('sh-player-joined');
         chat(data.name + " has joined the lobby!");
         $('#players').append('<button id="' + data.name + '" class="player">' + data.name + "</button>");
-        for(var i = 0; i < data.rp.length; i++){
+        for (var i = 0; i < data.rp.length; i++) {
             $('#' + data.rp[i]).attr('class', 'player-ready');
         }
         if (data.name == currentUser) {
@@ -74,13 +74,13 @@ function setup() {
         $('#' + data.name).remove();
         if (data.h != '') {
             if (data.h == data.name && data.gs) {
-                setTimeout(socket.emit('sh-end-game', nameOfHitler +" left,"), 5000);
+                setTimeout(socket.emit('sh-end-game', nameOfHitler + " left,"), 5000);
                 gameState = false;
             } else if (data.nl < 1 && data.gs) {
                 setTimeout(socket.emit('sh-end-game', "ALL " + nameOfLiberals + "s LEFT,"), 5000);
                 gameState = false;
             } else if (data.nf < 1 && data.gs) {
-                setTimeout(socket.emit('sh-end-game', "ALL "+ nameOfFascists + "s LEFT,"), 5000);
+                setTimeout(socket.emit('sh-end-game', "ALL " + nameOfFascists + "s LEFT,"), 5000);
                 gameState = false;
             }
         }
@@ -129,19 +129,20 @@ function setup() {
         players = data.p;
         if (hitler == currentUser) {
             socket.emit('join-sh-hitler');
-            $('#assignment').append('<div class="role">You are' + nameOfHitler + ', and a ' + nameOfFascists + '.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or be elected as' + nameOfChancellor + 'after 3 ' + nameOfFascists + ' policies are enacted.</div>');
+            $('#assignment').append('<div class="role">You are ' + nameOfHitler + ', and a ' + nameOfFascists + '.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or be elected as ' + nameOfChancellor + ' after 3 ' + nameOfFascists + ' policies are enacted.</div>');
         } else if (fascists.includes(currentUser)) {
             socket.emit('join-sh-fascists');
             $('#assignment').append('<div class="role">You are a ' + nameOfFascists + '.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or to elect' + nameOfHitler + ' as ' + nameOfChancellor + ' after 3 ' + nameOfFascists + 'policies are enacted.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 6 ' + nameOfFascists + ' policies or to elect ' + nameOfHitler + ' as ' + nameOfChancellor + ' after 3 ' + nameOfFascists + ' policies are enacted.</div>');
         } else if (liberals.includes(currentUser)) {
             socket.emit('join-sh-liberals');
-            $('#assignment').append('<div class="role">You are a' + nameOfLiberals + '.</div>');
-            $('#assignment').append('<div class="guide">Your goal is to enact 5 ' + nameOfLiberals + ' policies or to assassinate' + nameOfHitler + '.</div>');
+            $('#assignment').append('<div class="role">You are a ' + nameOfLiberals + '.</div>');
+            $('#assignment').append('<div class="guide">Your goal is to enact 5 ' + nameOfLiberals + ' policies or to assassinate ' + nameOfHitler + '.</div>');
         }
         console.log(data.pres);
-        $('#' + data.pres).css('border', 'solid cyan 2px');
+        $('#' + data.pres).attr('class', 'player-president');
+        console.log(data.pres);
         showRoles();
         if (data.pres == currentUser) {
             nominateChancellor();
@@ -178,8 +179,8 @@ function setup() {
     socket.on('chancellor-nominated', function (data) {
         console.log('#' + data.c);
         console.log($('#' + data.c));
-        $('#' + data.c).css('border', 'solid red 2px');
-        chat(data.c + " has been nominated as" + nameOfChancellor + ".", 'cyan');
+        $('#' + data.c).attr('class', 'player-chancellor');
+        chat(data.c + " has been nominated as " + nameOfChancellor + ".", 'cyan');
         chat("Vote for whether or not you support this government.", 'cyan');
         $('#voting').show();
     });
@@ -194,6 +195,13 @@ function setup() {
 
     socket.on('voting-failed', function (data) {
         chat("The election failed. The next nominee for " + nameOfPresident + " is " + data.presNom);
+        $('#' + data.chan).attr('class', 'player');
+        $('#' + data.pres).attr('class', 'player');
+        $('#' + data.presNom).attr('class', 'player-president');
+        
+        if(data.presNom == currentUser){
+            nominateChancellor();
+        }
     });
 
     socket.on('voting-passed', function (data) {
@@ -338,12 +346,15 @@ function showRoles() {
     }
 
     for (var i = 0; i < numPlayers; i++) {
-        $('#' + players[i]).attr('class', 'player');
+        var atr = $('#' + players[i]).attr('class');
+        console.log(atr);
+        if(atr == 'player-ready')
+            $('#' + players[i]).attr('class', 'player');
     }
 }
 
 function nominateChancellor() {
-    chat("You are the " + nameOfPresident + " Choose a " + nameOfChancellor + " candidate.", 'cyan');
+    chat("You are the " + nameOfPresident + ". Choose a " + nameOfChancellor + " candidate.", 'cyan');
     choosingChancellor = true;
 }
 
