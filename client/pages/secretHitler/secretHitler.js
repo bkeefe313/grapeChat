@@ -72,6 +72,10 @@ function setup() {
         $('#play-sh').hide();
         $('#logged-in').append('<div class="warning">You cannot join right now, there is a game in progress.</div>');
     });
+    
+    socket.on('not-enough-players', function(){
+       chat('Not enough players to start game.', 'red'); 
+    });
 
     socket.on('sh-player-left', function (data) {
         console.log('sh-player-left');
@@ -123,7 +127,7 @@ function setup() {
         $('#unready').hide();
         $('#ready-up').hide();
         $('#play-sh').prop('disable', true);
-        chat("STARTING GAME WITH " + data + " PLAYERS...", '#ff0000');
+        chat("STARTING GAME WITH " + data + " PLAYERS...", 'green');
     });
 
     socket.on('choose-roles', function (data) {

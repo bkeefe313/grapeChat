@@ -134,6 +134,8 @@ io.on('connection', (socket) => {
             io.emit('start-sh', readyPlayers.length);
             io.to('sh-lobby').emit('choose-roles', setRoles());
             shGameActive = true;
+        } else {
+            io.to('sh-lobby').emit('not-enough-players', setRoles());
         }
     });
 
