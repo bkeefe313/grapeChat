@@ -209,8 +209,6 @@ io.on('connection', (socket) => {
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
-            votesForGov = 0;
-            votesAgainstGov = 0;
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -218,12 +216,16 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor
                 });
+                votesForGov = 0;
+                votesAgainstGov = 0;
             } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
                 io.emit('voting-passed', {
                     pres: president,
                     chan: chancellor
                 });
+                votesForGov = 0;
+                votesAgainstGov = 0;
             }
         }
     });
@@ -235,8 +237,6 @@ io.on('connection', (socket) => {
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
-            votesForGov = 0;
-            votesAgainstGov = 0;
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -244,12 +244,16 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor
                 });
+                votesForGov = 0;
+                votesAgainstGov = 0;
             } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
                 io.emit('voting-passed', {
                     pres: president,
                     chan: chancellor
                 });
+                votesForGov = 0;
+                votesAgainstGov = 0;
             }
         }
     });
