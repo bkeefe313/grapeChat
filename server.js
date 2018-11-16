@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
 
         if (!shPlayers.includes(data)) {
             shPlayers.push(data);
-            if(readyPlayers.includes(data))
+            if (readyPlayers.includes(data))
                 readyPlayers.splice(readyPlayers.indexOf(data), 1);
             io.emit('sh-player-joined', {
                 name: data,
@@ -205,10 +205,12 @@ io.on('connection', (socket) => {
     socket.on('yes-for-gov', function (data) {
         votesForGov++;
         io.emit('yes-for-gov', data);
-        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov+votesAgainstGov));
+        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
+            votesForGov = 0;
+            votesAgainstGov = 0;
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -216,7 +218,7 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor
                 });
-            } else if(votesForGov > votesAgainstGov){
+            } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
                 io.emit('voting-passed', {
                     pres: president,
@@ -228,11 +230,13 @@ io.on('connection', (socket) => {
 
     socket.on('no-for-gov', function (data) {
         votesAgainstGov++;
-        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov+votesAgainstGov));
+        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
         io.emit('no-for-gov', data);
-        
+
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
+            votesForGov = 0;
+            votesAgainstGov = 0;
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -240,7 +244,7 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor
                 });
-            } else if(votesForGov > votesAgainstGov){
+            } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
                 io.emit('voting-passed', {
                     pres: president,
@@ -330,15 +334,15 @@ function setRoles() {
 
 }
 
-function nextPresident(){
+function nextPresident() {
     var index = shPlayers.indexOf(president);
-    if(index == shPlayers.length - 1)
+    if (index == shPlayers.length - 1)
         return shPlayers[0];
     else
         return shPlayers[index + 1];
 }
 
-function resetShVars(){
+function resetShVars() {
     shPlayers = [];
     readyPlayers = [];
     liberals = [];
