@@ -28,6 +28,8 @@ var chancellor = '';
 var undesirables = [];
 var votesForGov = 0;
 var votesAgainstGov = 0;
+var rejectedGovs = 0;
+var topThreePolicies = [];
 
 io.on('connection', (socket) => {
 
@@ -184,6 +186,10 @@ io.on('connection', (socket) => {
     socket.on('join-sh-fascists', function () {
         socket.join('sh-fascists');
     });
+    
+    socket.on('join-sh-chancellor', function(data){
+        socket.join('sh-chancellor');
+    });
 
     socket.on('sh-end-game', function (data) {
         var reason = data;
@@ -209,6 +215,7 @@ io.on('connection', (socket) => {
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
+            topThreePolicies = [];
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -218,14 +225,24 @@ io.on('connection', (socket) => {
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
+                rejectedGovs++;
+                if(rejectedGovs == 3){
+                    io.emit('sh-chaos');
+                }
             } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
+                for(var i = 0; i < 3; i++){
+                    var rand = Math.random() >= .5;
+                    topThreePolicies.push(rand);
+                }
                 io.emit('voting-passed', {
                     pres: president,
-                    chan: chancellor
+                    chan: chancellor,
+                    top: topThreePolicies
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
+                rejectedGovs = 0;
             }
         }
     });
@@ -237,6 +254,7 @@ io.on('connection', (socket) => {
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
+            topThreePolicies = [];
             if (votesAgainstGov >= votesForGov) {
                 console.log("voting failed");
                 io.emit('voting-failed', {
@@ -246,16 +264,34 @@ io.on('connection', (socket) => {
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
+                rejectedGovs++;
+                if(rejectedGovs == 3){
+                    
+                }
             } else if (votesForGov > votesAgainstGov) {
                 console.log("voting passed");
+                for(var i = 0; i < 3; i++){
+                    var rand = Math.random() >= .5;
+                    topThreePolicies.push(rand);
+                }
                 io.emit('voting-passed', {
                     pres: president,
-                    chan: chancellor
+                    chan: chancellor,
+                    top: topThreePolicies
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
+                rejectedGovs = 0;
             }
         }
+    });
+    
+    socket.on('pres-chose-policies', function(data){
+        io.to('sh-chancellor').emit('policies-to-chancellor', data);
+    });
+    
+    socket.on('chan-chose-policy', function(data){
+        io.emit('policy-enacted', data);
     });
 
 });
