@@ -130,7 +130,7 @@ io.on('connection', (socket) => {
     socket.on('sh-ready-up', function (data) {
         readyPlayers.push(data);
         io.emit('sh-ready-up', data);
-        if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 1) {
+        if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 5) {
             io.emit('start-sh', readyPlayers.length);
             io.to('sh-lobby').emit('choose-roles', setRoles());
             shGameActive = true;
