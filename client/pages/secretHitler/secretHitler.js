@@ -21,6 +21,10 @@ var presPolicies = [];
 var chanPolicy = false;
 var choosingPoliciesAsPres = false;
 var choosingPolicyAsChan = false;
+var presInvestigating = false;
+var presExecuting = false;
+var presChoosingNextPres = false;
+var topThreePolicies = [];
 
 function setup() {
     $('#controls').hide();
@@ -31,6 +35,10 @@ function setup() {
     $('#leave-sh').prop("disabled", true);
     $('#voting').hide();
     $('#cards').hide();
+    $('#inv-abl').prop('disabled', true);
+    $('#exe-abl').prop('disabled', true);
+    $('#spe-abl').prop('disabled', true);
+    $('#pol-abl').prop('disabled', true);
 
     socket.emit('entered-sh-page');
 
@@ -72,9 +80,9 @@ function setup() {
         $('#play-sh').hide();
         $('#logged-in').append('<div class="warning">You cannot join right now, there is a game in progress.</div>');
     });
-    
-    socket.on('not-enough-players', function(){
-       chat('Not enough players to start game.', 'red'); 
+
+    socket.on('not-enough-players', function () {
+        chat('Not enough players to start game.', 'red');
     });
 
     socket.on('sh-player-left', function (data) {
@@ -213,6 +221,17 @@ function setup() {
         }
     });
 
+    socket.on('new-round', function (data) {
+        chat("New nominee for " + nameOfPresident + " is " + data.presNom);
+        $('#' + data.chan).attr('class', 'player');
+        $('#' + data.pres).attr('class', 'player');
+        $('#' + data.presNom).attr('class', 'player-president');
+
+        if (data.presNom == currentUser) {
+            nominateChancellor();
+        }
+    })
+
     socket.on('voting-passed', function (data) {
         president = data.pres;
         chancellor = data.chan;
@@ -230,11 +249,83 @@ function setup() {
     });
 
     socket.on('policy-enacted', function (data) {
-        if (data) {
+        if (data.policy) {
             chat("A " + nameOfFascists + " policy has been enacted.", 'red');
+            topThreePolicies = data.top;
+            if (president == currentUser) {
+                if (data.players < 7) {
+                    if (data.fPols == 3) {
+                        $('#pol-abl').prop('disabled', false);
+                    } else if (data.fPols == 4 || data.fPols == 5) {
+                        $('#exe-abl').prop('disabled', false);
+                    } else if (data.fPols == 6) {
+                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                    } else {
+                        socket.emit('next-round', '');
+                    }
+                } else if (data.players == 7 || data.players == 8) {
+                    if (data.fPols == 2) {
+                        $('#inv-abl').prop('disabled', false);
+                    } else if (data.fPols == 3) {
+                        $('#spe-abl').prop('disabled', false);
+                    } else if (data.fPols == 4 || data.fPols == 5) {
+                        $('#exe-abl').prop('disabled', false);
+                    } else if (data.fPols == 6) {
+                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                    } else {
+                        socket.emit('next-round', '');
+                    }
+                } else if (data.players == 9 || data.players == 10) {
+                    if (data.fPols == 1 || data.players == 2) {
+                        $('#inv-abl').prop('disabled', false);
+                    } else if (data.fPols == 3) {
+                        $('#spe-abl').prop('disabled', false);
+                    } else if (data.fPols == 4 || data.fPols == 5) {
+                        $('#exe-abl').prop('disabled', false);
+                    } else if (data.fPols == 6) {
+                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                    } else {
+                        socket.emit('next-round', '');
+                    }
+                }
+            }
+
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted.", 'green');
+            if (data.lPols == 5) {
+                    socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
+            }
+            socket.emit('next-round', '');
         }
+    });
+
+    socket.on('player-killed', function (data) {
+        chat(data + ' was executed!', 'darkred');
+        $('#' + data).remove();
+        if (currentUser == data) {
+            $('#message').prop("disabled", true);
+            $('#send').prop("disabled", true);
+            $('#leave-sh').hide();
+            $('#leave-sh').prop("disabled", true);
+            $('#play-sh').show();
+            $('#play-sh').prop("disabled", false);
+            $('#ready-up').hide();
+            $('#unready').hide();
+            if (gameState == true)
+                $('#play-sh').hide();
+
+        }
+    });
+
+    socket.on('sh-game-finished', function (data) {
+        $('#leave-sh').hide();
+        $('#leave-sh').prop("disabled", true);
+        $('#play-sh').prop("disabled", false);
+        $('#ready-up').hide();
+        $('#unready').hide();
+        $('#play-sh').hide();
+        
+        chat(data + ' Purge the game to go again.', 'cyan');
     });
 
     $('#send').click(function () {
@@ -327,12 +418,12 @@ function setup() {
         socket.emit('no-for-gov', currentUser);
         $('#voting').hide();
     });
-    
+
     $('#card-a').click(function () {
         var cls = $('#card-a').attr('class');
         if (choosingPoliciesAsPres && cls == 'f-card') {
             console.log('chose liberal');
-            presPolicies.push(false);
+            presPolicies.push(true);
             $(this).hide();
             $(this).prop('disabled', true);
             if (presPolicies.length == 2) {
@@ -353,7 +444,7 @@ function setup() {
             console.log('chose fascist');
             $(this).hide();
             $(this).prop('disabled', true);
-            presPolicies.push(true);
+            presPolicies.push(false);
             if (presPolicies.length == 2) {
                 console.log('policies: ' + presPolicies);
                 $('#cards').hide();
@@ -370,12 +461,12 @@ function setup() {
             socket.emit('chan-chose-policy', chanPolicy);
         }
     });
-    
+
     $('#card-b').click(function () {
         var cls = $('#card-b').attr('class');
         if (choosingPoliciesAsPres && cls == 'f-card') {
             console.log('chose liberal');
-            presPolicies.push(false);
+            presPolicies.push(true);
             $(this).hide();
             $(this).prop('disabled', true);
             if (presPolicies.length == 2) {
@@ -396,7 +487,7 @@ function setup() {
             console.log('chose fascist');
             $(this).hide();
             $(this).prop('disabled', true);
-            presPolicies.push(true);
+            presPolicies.push(false);
             if (presPolicies.length == 2) {
                 console.log('policies: ' + presPolicies);
                 $('#cards').hide();
@@ -413,12 +504,12 @@ function setup() {
             socket.emit('chan-chose-policy', chanPolicy);
         }
     });
-    
+
     $('#card-c').click(function () {
         var cls = $('#card-c').attr('class');
         if (choosingPoliciesAsPres && cls == 'f-card') {
             console.log('chose liberal');
-            presPolicies.push(false);
+            presPolicies.push(true);
             $(this).hide();
             $(this).prop('disabled', true);
             if (presPolicies.length == 2) {
@@ -439,7 +530,7 @@ function setup() {
             console.log('chose fascist');
             $(this).hide();
             $(this).prop('disabled', true);
-            presPolicies.push(true);
+            presPolicies.push(false);
             if (presPolicies.length == 2) {
                 console.log('policies: ' + presPolicies);
                 $('#cards').hide();
@@ -455,6 +546,66 @@ function setup() {
             $('#cards').hide();
             socket.emit('chan-chose-policy', chanPolicy);
         }
+    });
+
+    $('#inv-abl').click(function () {
+        $('#inv-abl').prop('disabled', true);
+        $('#exe-abl').prop('disabled', true);
+        $('#spe-abl').prop('disabled', true);
+        $('#pol-abl').prop('disabled', true);
+
+        presInvestigating = true;
+        chat('Choose a player to investigate.', 'cyan');
+    });
+
+    $('#pol-abl').click(function () {
+        $('#inv-abl').prop('disabled', true);
+        $('#exe-abl').prop('disabled', true);
+        $('#spe-abl').prop('disabled', true);
+        $('#pol-abl').prop('disabled', true);
+        
+        var polA = ''
+        var polB = '';
+        var polC = '';
+        
+        if(topThreePolicies[0]){
+            polA = 'fascist';
+        } else {
+            polA = 'liberal';
+        }
+        if(topThreePolicies[1]){
+            polB = 'fascist';
+        } else {
+            polB = 'liberal';
+        }
+        if(topThreePolicies[2]){
+            polC = 'fascist';
+        } else {
+            polC = 'liberal';
+        }
+
+        chat("The next three policies are " + polA + ', ' + polB + ', and ' + polC + '.', 'cyan');
+        socket.emit('next-round', '');
+    });
+
+    $('#exe-abl').click(function () {
+        $('#inv-abl').prop('disabled', true);
+        $('#exe-abl').prop('disabled', true);
+        $('#spe-abl').prop('disabled', true);
+        $('#pol-abl').prop('disabled', true);
+
+        presExecuting = true;
+        chat('Choose a player to execute.', 'cyan');
+    });
+
+    $('#spe-abl').click(function () {
+        $('#inv-abl').prop('disabled', true);
+        $('#exe-abl').prop('disabled', true);
+        $('#spe-abl').prop('disabled', true);
+        $('#pol-abl').prop('disabled', true);
+
+        presChoosingNextPres = true;
+        chat('Choose a player to be selected as' + nameOfPresident + 'for the next election.');
     });
 
 }
@@ -466,6 +617,28 @@ function draw() {
             console.log('player clicked');
             socket.emit('chancellor-nominated', text);
             choosingChancellor = false;
+        }
+        if (presInvestigating) {
+            if (liberals.includes(text)) {
+                $(this).html(text + ": " + nameOfLiberals);
+            } else if (fascists.inclues(text)) {
+                $(this).html(text + ": " + nameOfFascists);
+            }
+            presInvestigating = false;
+            socket.emit('next-round', '');
+        }
+        if (presExecuting) {
+            socket.emit('sh-player-killed', text);
+            if (text == hitler) {
+                socket.emit('liberals-win', (nameOfHitler + " was killed! " + nameOfLiberals + " win!"));
+            } else {
+                socket.emit('next-round', '');
+            }
+            presExecuting = false;
+        }
+        if (presChoosingNextPres) {
+            socket.emit('next-round', '');
+            presChoosingNextPres = false;
         }
     });
 }
