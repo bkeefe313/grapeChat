@@ -1,11 +1,11 @@
 var socket = io();
 var loggedIn = localStorage.getItem("loggedIn");
 var currentUser = localStorage.getItem("currentUser");
-var nameOfHitler = 'Luke Pittman';
+var nameOfHitler = 'Hitler';
 var nameOfChancellor = 'Chancellor';
 var nameOfPresident = 'President';
-var nameOfFascists = 'Right-Wing Populist';
-var nameOfLiberals = 'Libtard';
+var nameOfFascists = 'Fascist';
+var nameOfLiberals = 'Liberal';
 
 //var inGame = false;
 var gameState = false;
@@ -25,6 +25,7 @@ var presInvestigating = false;
 var presExecuting = false;
 var presChoosingNextPres = false;
 var topThreePolicies = [];
+var undesirables = [];
 
 function setup() {
     $('#controls').hide();
@@ -194,12 +195,11 @@ function setup() {
     });
 
     socket.on('chancellor-nominated', function (data) {
-        console.log('#' + data.c);
-        console.log($('#' + data.c));
         $('#' + data.c).attr('class', 'player-chancellor');
         chat(data.c + " has been nominated as " + nameOfChancellor + ".", 'cyan');
         chat("Vote for whether or not you support this government.", 'cyan');
-        $('#voting').show();
+        if (data.shp.includes(currentUser))
+            $('#voting').show();
     });
 
     socket.on('yes-for-gov', function (data) {
@@ -222,10 +222,13 @@ function setup() {
     });
 
     socket.on('new-round', function (data) {
-        chat("New nominee for " + nameOfPresident + " is " + data.presNom);
+        chat("The new nominee for " + nameOfPresident + " is " + data.presNom);
         $('#' + data.chan).attr('class', 'player');
         $('#' + data.pres).attr('class', 'player');
         $('#' + data.presNom).attr('class', 'player-president');
+
+        undesirables = data.u;
+        console.log(undesirables);
 
         if (data.presNom == currentUser) {
             nominateChancellor();
@@ -239,6 +242,11 @@ function setup() {
         if (president == currentUser) {
             presChoosePolicies(data.top);
         }
+
+        if (chancellor == hitler && data.fPols >= 3) {
+            socket.emit('fascists-win', (nameOfHitler + " was elected after 3 " + nameOfFascists + " policies were enacted. " + nameOfFascists + " win!"));
+        }
+
         if (chancellor == currentUser) {
             socket.emit('join-sh-chancellor', chancellor);
         }
@@ -252,6 +260,7 @@ function setup() {
         if (data.policy) {
             chat("A " + nameOfFascists + " policy has been enacted.", 'red');
             topThreePolicies = data.top;
+            $('#f-policies').html(nameOfFascists + ' Policies: ' + data.fPols);
             if (president == currentUser) {
                 if (data.players < 7) {
                     if (data.fPols == 3) {
@@ -259,7 +268,8 @@ function setup() {
                     } else if (data.fPols == 4 || data.fPols == 5) {
                         $('#exe-abl').prop('disabled', false);
                     } else if (data.fPols == 6) {
-                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                        if(currentUser == president)
+                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
                     } else {
                         socket.emit('next-round', '');
                     }
@@ -271,7 +281,8 @@ function setup() {
                     } else if (data.fPols == 4 || data.fPols == 5) {
                         $('#exe-abl').prop('disabled', false);
                     } else if (data.fPols == 6) {
-                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                        if(currentUser == president)
+                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
                     } else {
                         socket.emit('next-round', '');
                     }
@@ -283,7 +294,8 @@ function setup() {
                     } else if (data.fPols == 4 || data.fPols == 5) {
                         $('#exe-abl').prop('disabled', false);
                     } else if (data.fPols == 6) {
-                        socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+                        if(currentUser == president)
+                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
                     } else {
                         socket.emit('next-round', '');
                     }
@@ -292,10 +304,13 @@ function setup() {
 
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted.", 'green');
+            $('#l-policies').html(nameOfLiberals + ' Policies: ' + data.lPols);
             if (data.lPols == 5) {
-                    socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
+                socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
             }
-            socket.emit('next-round', '');
+            if (president == currentUser) {
+                socket.emit('next-round', '');
+            }
         }
     });
 
@@ -324,8 +339,32 @@ function setup() {
         $('#ready-up').hide();
         $('#unready').hide();
         $('#play-sh').hide();
-        
-        chat(data + ' Purge the game to go again.', 'cyan');
+
+        chat(data + ' Purge the game to play again.', 'cyan');
+    });
+
+    socket.on('sh-chaos', function () {
+        chat("3 governments have been consecutively rejected! A random policy will be enacted!");
+        if (topThreePolicies[0]) {
+            chat("A " + nameOfFascists + " policy has been enacted in the chaos!", 'red');
+            $('#f-policies').html(nameOfFascists + ' Policies: ' + (data.f + 1));
+        } else {
+            chat("A " + nameOfLiberals + " policy has been enacted in the chaos!", 'green');
+            $('#f-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
+        }
+        socket.emit('chaos-policy-enacted', topThreePolicies[0]);
+    });
+
+    socket.on('notify-investigation', function (data) {
+        if (data == currentUser) {
+            chat(president + " has just investigated you and knows your party affiliation.", 'red');
+        }
+    });
+
+    socket.on('try-chan-nom-again', function (data) {
+        if (currentUser == data) {
+            nominateChancellor();
+        }
     });
 
     $('#send').click(function () {
@@ -563,22 +602,22 @@ function setup() {
         $('#exe-abl').prop('disabled', true);
         $('#spe-abl').prop('disabled', true);
         $('#pol-abl').prop('disabled', true);
-        
+
         var polA = ''
         var polB = '';
         var polC = '';
-        
-        if(topThreePolicies[0]){
+
+        if (topThreePolicies[0]) {
             polA = 'fascist';
         } else {
             polA = 'liberal';
         }
-        if(topThreePolicies[1]){
+        if (topThreePolicies[1]) {
             polB = 'fascist';
         } else {
             polB = 'liberal';
         }
-        if(topThreePolicies[2]){
+        if (topThreePolicies[2]) {
             polC = 'fascist';
         } else {
             polC = 'liberal';
@@ -605,7 +644,7 @@ function setup() {
         $('#pol-abl').prop('disabled', true);
 
         presChoosingNextPres = true;
-        chat('Choose a player to be selected as' + nameOfPresident + 'for the next election.');
+        chat('Choose a player to be selected as ' + nameOfPresident + ' for the next election.');
     });
 
 }
@@ -614,30 +653,37 @@ function draw() {
     $('.player').click(function () {
         var text = $(this).attr('id');
         if (choosingChancellor && text != currentUser) {
-            console.log('player clicked');
-            socket.emit('chancellor-nominated', text);
-            choosingChancellor = false;
+            if (undesirables.includes(text)) {
+                chat('You cannot choose this person, they were recently elected as ' + nameOfChancellor + " or " + nameOfPresident, 'red');
+                choosingChancellor = false;
+                socket.emit('reset-chancellor-nom');
+            } else {
+                console.log('player clicked');
+                socket.emit('chancellor-nominated', text);
+                choosingChancellor = false;
+            }
         }
-        if (presInvestigating) {
+        if (presInvestigating && text != currentUser) {
             if (liberals.includes(text)) {
                 $(this).html(text + ": " + nameOfLiberals);
             } else if (fascists.inclues(text)) {
                 $(this).html(text + ": " + nameOfFascists);
             }
+            socket.emit('player-investigated', text);
             presInvestigating = false;
             socket.emit('next-round', '');
         }
-        if (presExecuting) {
+        if (presExecuting && text != currentUser) {
             socket.emit('sh-player-killed', text);
             if (text == hitler) {
-                socket.emit('liberals-win', (nameOfHitler + " was killed! " + nameOfLiberals + " win!"));
+                socket.emit('liberals-win', (nameOfHitler + " was killed! " + nameOfLiberals + "s win!"));
             } else {
                 socket.emit('next-round', '');
             }
             presExecuting = false;
         }
         if (presChoosingNextPres) {
-            socket.emit('next-round', '');
+            socket.emit('next-round', text);
             presChoosingNextPres = false;
         }
     });
@@ -704,6 +750,15 @@ function resetVars() {
     voting = false;
     president = '';
     chancellor = '';
+    presPolicies = [];
+    chanPolicy = false;
+    choosingPoliciesAsPres = false;
+    choosingPolicyAsChan = false;
+    presInvestigating = false;
+    presExecuting = false;
+    presChoosingNextPres = false;
+    topThreePolicies = [];
+    undesirables = [];
 }
 
 function presChoosePolicies(top) {
