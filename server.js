@@ -146,7 +146,7 @@ io.on('connection', (socket) => {
             shGameActive = true;
             turnNum++;
             for (var i = 0; i < 3; i++) {
-                var rand = Math.random() >= .5;
+                var rand = Math.random(0,17) >= 7;
                 topThreePolicies.push(rand);
             }
         } else if (readyPlayers.length == shPlayers.length && readyPlayers.length < 5) {
@@ -313,7 +313,7 @@ io.on('connection', (socket) => {
     socket.on('chan-chose-policy', function (data) {
         topThreePolicies = [];
         for (var i = 0; i < 3; i++) {
-            var rand = Math.random() >= .5;
+            var rand = Math.random(0,17) >= 7;
             topThreePolicies.push(rand);
         }
         if (data)
@@ -387,7 +387,7 @@ io.on('connection', (socket) => {
 
     socket.on('chaos-policy-enacted', function (data) {
         topThreePolicies.splice(topThreePolicies.indexOf(data), 1);
-        var rand = Math.random() >= .5;
+        var rand = Math.random(0,17) >= 7;
         topThreePolicies.push(rand);
         if (data)
             fPols++;
