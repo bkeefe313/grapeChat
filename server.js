@@ -41,6 +41,8 @@ var fPols = 0;
 var lPols = 0;
 var turnNum = 0;
 var deck = [];
+var votersForGov = [];
+var votersAgainstGov = [];
 
 io.on('connection', (socket) => {
 
@@ -223,8 +225,8 @@ io.on('connection', (socket) => {
 
     socket.on('yes-for-gov', function (data) {
         votesForGov++;
-        io.emit('yes-for-gov', data);
         console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+        votersForGov.push(data);
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
@@ -234,7 +236,8 @@ io.on('connection', (socket) => {
                 io.emit('voting-failed', {
                     presNom: presNom,
                     pres: prevPresNom,
-                    chan: chanNom
+                    chan: chanNom,
+                    va: votersAgainstGov
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
@@ -256,7 +259,8 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor,
                     top: topThreePolicies,
-                    fPols: fPols
+                    fPols: fPols,
+                    va: votersAgainstGov
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
@@ -268,7 +272,7 @@ io.on('connection', (socket) => {
     socket.on('no-for-gov', function (data) {
         votesAgainstGov++;
         console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
-        io.emit('no-for-gov', data);
+        votersAgainstGov.push(data);
 
         if (votesAgainstGov + votesForGov == shPlayers.length) {
             console.log("all votes in");
@@ -278,7 +282,8 @@ io.on('connection', (socket) => {
                 io.emit('voting-failed', {
                     presNom: presNom,
                     pres: prevPresNom,
-                    chan: chanNom
+                    chan: chanNom,
+                    va: votersAgainstGov
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;
@@ -300,7 +305,9 @@ io.on('connection', (socket) => {
                     pres: president,
                     chan: chancellor,
                     top: topThreePolicies,
-                    fPols: fPols
+                    fPols: fPols,
+                    va: votersAgainstGov,
+                    vf: votersForGov
                 });
                 votesForGov = 0;
                 votesAgainstGov = 0;

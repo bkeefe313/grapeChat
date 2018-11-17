@@ -202,15 +202,15 @@ function setup() {
             $('#voting').show();
     });
 
-    socket.on('yes-for-gov', function (data) {
-        chat(data + " voted FOR this government.", 'green');
-    });
-
-    socket.on('no-for-gov', function (data) {
-        chat(data + " voted AGAINST this government.", 'red');
-    });
-
     socket.on('voting-failed', function (data) {
+        for(var i = 0; i < data.va.length; i++){
+            chat(data.va[i] + " voted AGAINST this government!", 'red');
+        }
+        
+        for(var i = 0; i < data.vf.length; i++){
+            chat(data.vf[i] + " voted FOR this government!", 'green');
+        }
+        
         chat("The election failed. The next nominee for " + nameOfPresident + " is " + data.presNom);
         $('#' + data.chan).attr('class', 'player');
         $('#' + data.pres).attr('class', 'player');
@@ -238,6 +238,14 @@ function setup() {
     socket.on('voting-passed', function (data) {
         president = data.pres;
         chancellor = data.chan;
+        
+        for(var i = 0; i < data.va.length; i++){
+            chat(data.va[i] + " voted AGAINST this government!", 'red');
+        }
+        for(var i = 0; i < data.vf.length; i++){
+            chat(data.vf[i] + " voted FOR this government!", 'green');
+        }
+        
         chat("The election was successful. " + president + " is the new " + nameOfPresident + " and " + chancellor + " is the new " + nameOfChancellor + ".", 'cyan');
         if (president == currentUser) {
             presChoosePolicies(data.top);
@@ -356,9 +364,7 @@ function setup() {
     });
 
     socket.on('notify-investigation', function (data) {
-        if (data == currentUser) {
-            chat(president + " has just investigated you and knows your party affiliation.", 'red');
-        }
+        chat(president + " has just investigated " + data + " and knows their party affiliation.", 'red');
     });
 
     socket.on('try-chan-nom-again', function (data) {
