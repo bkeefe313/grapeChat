@@ -12,6 +12,7 @@ const server = app
 
 const io = socketio(server);
 
+//non-resettable (^those too^)
 var users = [];
 var userColors = [];
 var lWins = 0;
@@ -83,339 +84,363 @@ io.on('connection', (socket) => {
         console.log(data.name + ': ' + data);
     });
 
-    socket.on('sh-message', function (data) {
-        var message = {
-            user: data.name,
-            message: data.t,
-            c: userColors[users.indexOf(data.name)]
-        };
-        io.emit('sh-message', message);
-    });
+    //Secret Hitler
+    {
+        socket.on('sh-message', function (data) {
+            var message = {
+                user: data.name,
+                message: data.t,
+                c: userColors[users.indexOf(data.name)]
+            };
+            io.emit('sh-message', message);
+        });
 
-    socket.on('sh-player-joined', function (data) {
-        var color = userColors[users.indexOf(data)];
+        socket.on('sh-player-joined', function (data) {
+            var color = userColors[users.indexOf(data)];
 
-        if (!shPlayers.includes(data)) {
-            shPlayers.push(data);
-            if (readyPlayers.includes(data))
+            if (!shPlayers.includes(data)) {
+                shPlayers.push(data);
+                if (readyPlayers.includes(data))
+                    readyPlayers.splice(readyPlayers.indexOf(data), 1);
+                io.emit('sh-player-joined', {
+                    name: data,
+                    c: color,
+                    num: shPlayers.length,
+                    rp: readyPlayers
+                });
+            } else {
+                socket.emit('sh-failed-join');
+            }
+        });
+
+        socket.on('sh-player-left', function (data) {
+            console.log('player-left');
+            if (readyPlayers.includes(data)) {
                 readyPlayers.splice(readyPlayers.indexOf(data), 1);
-            io.emit('sh-player-joined', {
+            }
+            if (liberals.includes(data)) {
+                liberals.splice(liberals.indexOf(data), 1);
+            }
+            if (fascists.includes(data)) {
+                fascists.splice(fascists.indexOf(data), 1);
+            }
+            shPlayers.splice(shPlayers.indexOf(data), 1);
+            io.emit('sh-player-left', {
                 name: data,
-                c: color,
-                num: shPlayers.length,
+                h: hitler,
+                gs: shGameActive,
+                nl: liberals.length,
+                nf: fascists.length
+            });
+        });
+
+        socket.on('entered-sh-page', function () {
+            socket.emit('show-active-players', {
+                p: shPlayers,
                 rp: readyPlayers
             });
-        } else {
-            socket.emit('sh-failed-join');
-        }
-    });
+            if (shGameActive)
+                socket.emit('sh-in-progress')
+        });
 
-    socket.on('sh-player-left', function (data) {
-        console.log('player-left');
-        if (readyPlayers.includes(data)) {
+        socket.on('sh-ready-up', function (data) {
+            readyPlayers.push(data);
+            io.emit('sh-ready-up', data);
+            if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 5) {
+                io.emit('start-sh', readyPlayers.length);
+                io.emit('choose-roles', setRoles());
+                shGameActive = true;
+                turnNum++;
+                if (deck.length >= 3)
+                    topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+                else
+                    buildDeck();
+            } else if (readyPlayers.length == shPlayers.length && readyPlayers.length < 5) {
+                io.to('sh-lobby').emit('not-enough-players', setRoles());
+            }
+        });
+
+        socket.on('sh-unready', function (data) {
             readyPlayers.splice(readyPlayers.indexOf(data), 1);
-        }
-        if (liberals.includes(data)) {
-            liberals.splice(liberals.indexOf(data), 1);
-        }
-        if (fascists.includes(data)) {
-            fascists.splice(fascists.indexOf(data), 1);
-        }
-        shPlayers.splice(shPlayers.indexOf(data), 1);
-        io.emit('sh-player-left', {
-            name: data,
-            h: hitler,
-            gs: shGameActive,
-            nl: liberals.length,
-            nf: fascists.length
+            io.emit('sh-unready', data);
         });
-    });
 
-    socket.on('entered-sh-page', function () {
-        socket.emit('show-active-players', {
-            p: shPlayers,
-            rp: readyPlayers
+        socket.on('disconnect', function () {
+            if (!socket.user) //make sure socket has a user before proceeding
+                return;
+
+            if (users.indexOf(socket.user) > -1) {
+                users.splice(users.indexOf(socket.user), 1);
+                socket.broadcast.emit('otherUserDisconnect', {
+                    name: socket.user,
+                    h: hitler,
+                    gs: shGameActive
+                });
+                console.log(socket.user + 'disconnected\nusers: ' + users.length);
+
+                if (shPlayers.includes(socket.user)) {
+                    io.emit('sh-player-left', socket.user);
+                    shPlayers.splice(shPlayers.indexOf(socket.user, 1));
+                    if (readyPlayers.includes(data)) {
+                        readyPlayers.splice(readyPlayers.indexOf(data), 1);
+                    }
+                }
+            }
         });
-        if (shGameActive)
-            socket.emit('sh-in-progress')
-    });
 
-    socket.on('sh-ready-up', function (data) {
-        readyPlayers.push(data);
-        io.emit('sh-ready-up', data);
-        if (readyPlayers.length == shPlayers.length && readyPlayers.length >= 5) {
-            io.emit('start-sh', readyPlayers.length);
-            io.emit('choose-roles', setRoles());
-            shGameActive = true;
-            turnNum++;
+        socket.on('join-sh-lobby', function () {
+            socket.join('sh-lobby');
+        });
+
+        socket.on('join-sh-hitler', function () {
+            socket.join('sh-hitler');
+        });
+
+        socket.on('join-sh-liberals', function () {
+            socket.join('sh-liberals');
+        });
+
+        socket.on('join-sh-fascists', function () {
+            socket.join('sh-fascists');
+        });
+
+        socket.on('join-sh-chancellor', function (data) {
+            socket.join('sh-chancellor');
+        });
+
+        socket.on('sh-end-game', function (data) {
+            var reason = data;
+            for (var i = 0; i < shPlayers.length; i++) {
+                io.emit('sh-player-left', shPlayers[i]);
+            }
+            resetShVars();
+            io.emit('reset-sh', reason);
+        });
+
+        socket.on('chancellor-nominated', function (data) {
+            chanNom = data;
+            io.emit('chancellor-nominated', {
+                c: chanNom,
+                p: presNom,
+                shp: shPlayers
+            });
+        })
+
+        socket.on('yes-for-gov', function (data) {
+            votesForGov++;
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            votersForGov.push(data);
+
+            if (votesAgainstGov + votesForGov == shPlayers.length) {
+                console.log("all votes in");
+                if (votesAgainstGov >= votesForGov) {
+                    console.log("voting failed");
+                    nextPresident();
+                    io.emit('voting-failed', {
+                        presNom: presNom,
+                        pres: prevPresNom,
+                        chan: chanNom,
+                        va: votersAgainstGov,
+                        vf: votersForGov
+                    });
+                    votesForGov = 0;
+                    votesAgainstGov = 0;
+                    rejectedGovs++;
+                    if (rejectedGovs == 3) {
+                        undesirables = [];
+                        io.emit('sh-chaos', {
+                            f: fPols,
+                            l: lPols
+                        });
+                    }
+                } else if (votesForGov > votesAgainstGov) {
+                    console.log("voting passed");
+                    president = presNom;
+                    chancellor = chanNom;
+                    undesirables.push(president);
+                    undesirables.push(chancellor);
+                    io.emit('voting-passed', {
+                        pres: president,
+                        chan: chancellor,
+                        top: topThreePolicies,
+                        fPols: fPols,
+                        va: votersAgainstGov,
+                        vf: votersForGov
+                    });
+                    votesForGov = 0;
+                    votesAgainstGov = 0;
+                    rejectedGovs = 0;
+                }
+            }
+        });
+
+        socket.on('no-for-gov', function (data) {
+            votesAgainstGov++;
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            votersAgainstGov.push(data);
+
+            if (votesAgainstGov + votesForGov == shPlayers.length) {
+                console.log("all votes in");
+                if (votesAgainstGov >= votesForGov) {
+                    console.log("voting failed");
+                    nextPresident();
+                    io.emit('voting-failed', {
+                        presNom: presNom,
+                        pres: prevPresNom,
+                        chan: chanNom,
+                        va: votersAgainstGov,
+                        vf: votersForGov
+                    });
+                    votesForGov = 0;
+                    votesAgainstGov = 0;
+                    rejectedGovs++;
+                    if (rejectedGovs == 3) {
+                        undesirables = [];
+                        socket.emit('sh-chaos', {
+                            f: fPols,
+                            l: lPols
+                        })
+                    }
+                } else if (votesForGov > votesAgainstGov) {
+                    console.log("voting passed");
+                    president = presNom;
+                    chancellor = chanNom;
+                    undesirables.push(president);
+                    undesirables.push(chancellor);
+                    io.emit('voting-passed', {
+                        pres: president,
+                        chan: chancellor,
+                        top: topThreePolicies,
+                        fPols: fPols,
+                        va: votersAgainstGov,
+                        vf: votersForGov
+                    });
+                    votesForGov = 0;
+                    votesAgainstGov = 0;
+                    rejectedGovs = 0;
+                }
+            }
+        });
+
+        socket.on('pres-chose-policies', function (data) {
+            io.to('sh-chancellor').emit('policies-to-chancellor', data);
+        });
+
+        socket.on('chan-chose-policy', function (data) {
+            console.log(deck);
             if (deck.length >= 3)
                 topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
             else
                 buildDeck();
-        } else if (readyPlayers.length == shPlayers.length && readyPlayers.length < 5) {
-            io.to('sh-lobby').emit('not-enough-players', setRoles());
-        }
-    });
+            console.log(topThreePolicies);
+            console.log(deck);
 
-    socket.on('sh-unready', function (data) {
-        readyPlayers.splice(readyPlayers.indexOf(data), 1);
-        io.emit('sh-unready', data);
-    });
-
-    socket.on('disconnect', function () {
-        if (!socket.user) //make sure socket has a user before proceeding
-            return;
-
-        if (users.indexOf(socket.user) > -1) {
-            users.splice(users.indexOf(socket.user), 1);
-            socket.broadcast.emit('otherUserDisconnect', {
-                name: socket.user,
-                h: hitler,
-                gs: shGameActive
+            if (data)
+                fPols++;
+            else
+                lPols++;
+            io.emit('policy-enacted', {
+                policy: data,
+                fPols: fPols,
+                lPols: lPols,
+                players: shPlayers.length,
+                top: topThreePolicies
             });
-            console.log(socket.user + 'disconnected\nusers: ' + users.length);
-
-            if (shPlayers.includes(socket.user)) {
-                io.emit('sh-player-left', socket.user);
-                shPlayers.splice(shPlayers.indexOf(socket.user, 1));
-                if (readyPlayers.includes(data)) {
-                    readyPlayers.splice(readyPlayers.indexOf(data), 1);
-                }
-            }
-        }
-    });
-
-    socket.on('join-sh-lobby', function () {
-        socket.join('sh-lobby');
-    });
-
-    socket.on('join-sh-hitler', function () {
-        socket.join('sh-hitler');
-    });
-
-    socket.on('join-sh-liberals', function () {
-        socket.join('sh-liberals');
-    });
-
-    socket.on('join-sh-fascists', function () {
-        socket.join('sh-fascists');
-    });
-
-    socket.on('join-sh-chancellor', function (data) {
-        socket.join('sh-chancellor');
-    });
-
-    socket.on('sh-end-game', function (data) {
-        var reason = data;
-        for (var i = 0; i < shPlayers.length; i++) {
-            io.emit('sh-player-left', shPlayers[i]);
-        }
-        resetShVars();
-        io.emit('reset-sh', reason);
-    });
-
-    socket.on('chancellor-nominated', function (data) {
-        chanNom = data;
-        io.emit('chancellor-nominated', {
-            c: chanNom,
-            p: presNom,
-            shp: shPlayers
+            socket.leave('sh-chancellor');
         });
-    })
 
-    socket.on('yes-for-gov', function (data) {
-        votesForGov++;
-        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
-        votersForGov.push(data);
-
-        if (votesAgainstGov + votesForGov == shPlayers.length) {
-            console.log("all votes in");
-            if (votesAgainstGov >= votesForGov) {
-                console.log("voting failed");
+        socket.on('next-round', function (data) {
+            votersForGov = [];
+            votersAgainstGov = [];
+            if (data == '') {
                 nextPresident();
-                io.emit('voting-failed', {
+                turnNum++;
+                io.emit('new-round', {
                     presNom: presNom,
-                    pres: prevPresNom,
-                    chan: chanNom,
-                    va: votersAgainstGov
-                });
-                votesForGov = 0;
-                votesAgainstGov = 0;
-                rejectedGovs++;
-                if (rejectedGovs == 3) {
-                    undesirables = [];
-                    io.emit('sh-chaos', {
-                        f: fPols,
-                        l: lPols
-                    });
-                }
-            } else if (votesForGov > votesAgainstGov) {
-                console.log("voting passed");
-                president = presNom;
-                chancellor = chanNom;
-                undesirables.push(president);
-                undesirables.push(chancellor);
-                io.emit('voting-passed', {
                     pres: president,
                     chan: chancellor,
-                    top: topThreePolicies,
-                    fPols: fPols,
-                    va: votersAgainstGov
+                    u: undesirables
                 });
-                votesForGov = 0;
-                votesAgainstGov = 0;
-                rejectedGovs = 0;
-            }
-        }
-    });
-
-    socket.on('no-for-gov', function (data) {
-        votesAgainstGov++;
-        console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
-        votersAgainstGov.push(data);
-
-        if (votesAgainstGov + votesForGov == shPlayers.length) {
-            console.log("all votes in");
-            if (votesAgainstGov >= votesForGov) {
-                console.log("voting failed");
-                nextPresident();
-                io.emit('voting-failed', {
-                    presNom: presNom,
-                    pres: prevPresNom,
-                    chan: chanNom,
-                    va: votersAgainstGov
-                });
-                votesForGov = 0;
-                votesAgainstGov = 0;
-                rejectedGovs++;
-                if (rejectedGovs == 3) {
-                    undesirables = [];
-                    socket.emit('sh-chaos', {
-                        f: fPols,
-                        l: lPols
-                    })
-                }
-            } else if (votesForGov > votesAgainstGov) {
-                console.log("voting passed");
-                president = presNom;
-                chancellor = chanNom;
-                undesirables.push(president);
-                undesirables.push(chancellor);
-                io.emit('voting-passed', {
+                undesirables.splice(0, 2);
+            } else {
+                turnNum++;
+                presNom = data;
+                io.emit('new-round', {
+                    presNom: data,
                     pres: president,
                     chan: chancellor,
-                    top: topThreePolicies,
-                    fPols: fPols,
-                    va: votersAgainstGov,
-                    vf: votersForGov
+                    u: undesirables
                 });
-                votesForGov = 0;
-                votesAgainstGov = 0;
-                rejectedGovs = 0;
+                undesirables.splice(0, 2);
             }
-        }
-    });
-
-    socket.on('pres-chose-policies', function (data) {
-        io.to('sh-chancellor').emit('policies-to-chancellor', data);
-    });
-
-    socket.on('chan-chose-policy', function (data) {
-        console.log(deck);
-        if (deck.length >= 3)
-            topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
-        else
-            buildDeck();
-        console.log(topThreePolicies);
-        console.log(deck);
-
-        if (data)
-            fPols++;
-        else
-            lPols++;
-        io.emit('policy-enacted', {
-            policy: data,
-            fPols: fPols,
-            lPols: lPols,
-            players: shPlayers.length,
-            top: topThreePolicies
         });
-        socket.leave('sh-chancellor');
-    });
 
-    socket.on('next-round', function (data) {
-        if (data == '') {
-            nextPresident();
-            turnNum++;
-            io.emit('new-round', {
-                presNom: presNom,
-                pres: president,
-                chan: chancellor,
-                u: undesirables
-            });
-            undesirables.splice(0, 2);
-        } else {
-            turnNum++;
-            presNom = data;
-            io.emit('new-round', {
-                presNom: data,
-                pres: president,
-                chan: chancellor,
-                u: undesirables
-            });
-            undesirables.splice(0, 2);
-        }
-    });
+        socket.on('sh-player-killed', function (data) {
+            if (shPlayers.includes(data)) {
+                shPlayers.splice(shPlayers.indexOf(data), 1);
+            }
+            if (readyPlayers.includes(data)) {
+                readyPlayers.splice(readyPlayers.indexOf(data), 1);
+            }
+            if (liberals.includes(data)) {
+                liberals.splice(liberals.indexOf(data), 1);
+            }
+            if (fascists.includes(data)) {
+                fascists.splice(fascists.indexOf(data), 1);
+            }
 
-    socket.on('sh-player-killed', function (data) {
-        if (shPlayers.includes(data)) {
-            shPlayers.splice(shPlayers.indexOf(data), 1);
-        }
-        if (readyPlayers.includes(data)) {
-            readyPlayers.splice(readyPlayers.indexOf(data), 1);
-        }
-        if (liberals.includes(data)) {
-            liberals.splice(liberals.indexOf(data), 1);
-        }
-        if (fascists.includes(data)) {
-            fascists.splice(fascists.indexOf(data), 1);
-        }
+            io.emit('player-killed', data);
+        });
 
-        io.emit('player-killed', data);
-    });
+        socket.on('liberals-win', function (data) {
+            lWins++;
+            io.emit('sh-game-finished', data);
+        });
 
-    socket.on('liberals-win', function (data) {
-        lWins++;
-        io.emit('sh-game-finished', data);
-    });
+        socket.on('fascists-win', function (data) {
+            fWins++;
+            io.emit('sh-game-finished', data);
+        });
 
-    socket.on('fascists-win', function (data) {
-        fWins++;
-        io.emit('sh-game-finished', data);
-    });
+        socket.on('reset-chancellor-nom', function (data) {
+            io.emit('try-chan-nom-again', presNom);
+        });
 
-    socket.on('reset-chancellor-nom', function (data) {
-        io.emit('try-chan-nom-again', presNom);
-    });
+        socket.on('chaos-policy-enacted', function (data) {
+            if (deck.length >= 3)
+                topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+            else
+                buildDeck();
 
-    socket.on('chaos-policy-enacted', function (data) {
-        if (deck.length >= 3)
-            topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
-        else
-            buildDeck();
-        
-        if (data)
-            fPols++;
-        else
-            lPols++;
-        rejectedGovs = 0;
-        undesirables = [];
-    });
+            if (data)
+                fPols++;
+            else
+                lPols++;
+            rejectedGovs = 0;
+            undesirables = [];
+        });
 
-    socket.on('player-investigated', function (data) {
-        io.emit('notify-investigation', data);
-    });
+        socket.on('player-investigated', function (data) {
+            io.emit('notify-investigation', data);
+        });
+    }
 
+    //Grapes Against Humanity
+    {
+        socket.on('joined-g', function () {
+            socket.join('g-lobby');
+        });
+
+        socket.on('g-message', function (data) {
+            var message = {
+                user: data.name,
+                message: data.t,
+                c: userColors[users.indexOf(data.name)]
+            };
+            io.to('g-lobby').emit('g-message', message);
+        });
+
+    }
 });
 
 function shuffle(array) {
@@ -545,4 +570,6 @@ function resetShVars() {
     fPols = 0;
     lPols = 0;
     turnNum = 0;
+    votersForGov = [];
+    votersAgainstGov = [];
 }

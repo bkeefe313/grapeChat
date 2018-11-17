@@ -43,6 +43,26 @@ button {
     font-size: 12px;
 }
 
+#message {
+    width: 100%;
+}
+
+#content{
+    margin: auto;
+    width: 75%;
+}
+
+#log{
+    font-family: monospace;
+    border: solid black 1px;
+    margin: auto;
+    background-color: darkslateblue;
+    padding:5px;
+    width:100%;
+    height: 400px;
+    overflow-y: auto;
+}
+
 button:hover{
     background-color:purple;
 }
