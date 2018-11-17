@@ -243,8 +243,8 @@ function setup() {
             presChoosePolicies(data.top);
         }
 
-        if (chancellor == hitler && data.fPols >= 3) {
-            socket.emit('fascists-win', (nameOfHitler + " was elected after 3 " + nameOfFascists + " policies were enacted. " + nameOfFascists + " win!"));
+        if (chancellor == hitler && data.fPols >= 3 && currentUser == president) {
+            socket.emit('fascists-win', (nameOfHitler + " was elected after 3 " + nameOfFascists + " policies were enacted. " + nameOfFascists + "s win!"));
         }
 
         if (chancellor == currentUser) {

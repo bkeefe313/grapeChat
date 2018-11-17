@@ -40,6 +40,7 @@ var presIndex = 0;
 var fPols = 0;
 var lPols = 0;
 var turnNum = 0;
+var deck = [];
 
 io.on('connection', (socket) => {
 
@@ -145,10 +146,10 @@ io.on('connection', (socket) => {
             io.emit('choose-roles', setRoles());
             shGameActive = true;
             turnNum++;
-            for (var i = 0; i < 3; i++) {
-                var rand = Math.random(0,17) >= 7;
-                topThreePolicies.push(rand);
-            }
+            if (deck.length >= 3)
+                topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+            else
+                buildDeck();
         } else if (readyPlayers.length == shPlayers.length && readyPlayers.length < 5) {
             io.to('sh-lobby').emit('not-enough-players', setRoles());
         }
@@ -239,6 +240,7 @@ io.on('connection', (socket) => {
                 votesAgainstGov = 0;
                 rejectedGovs++;
                 if (rejectedGovs == 3) {
+                    undesirables = [];
                     io.emit('sh-chaos', {
                         f: fPols,
                         l: lPols
@@ -282,6 +284,7 @@ io.on('connection', (socket) => {
                 votesAgainstGov = 0;
                 rejectedGovs++;
                 if (rejectedGovs == 3) {
+                    undesirables = [];
                     socket.emit('sh-chaos', {
                         f: fPols,
                         l: lPols
@@ -311,11 +314,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('chan-chose-policy', function (data) {
-        topThreePolicies = [];
-        for (var i = 0; i < 3; i++) {
-            var rand = Math.random(0,17) >= 7;
-            topThreePolicies.push(rand);
-        }
+        console.log(deck);
+        if (deck.length >= 3)
+            topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+        else
+            buildDeck();
+        console.log(topThreePolicies);
+        console.log(deck);
+
         if (data)
             fPols++;
         else
@@ -380,15 +386,17 @@ io.on('connection', (socket) => {
         fWins++;
         io.emit('sh-game-finished', data);
     });
-    
-    socket.on('reset-chancellor-nom', function(data){
-       io.emit('try-chan-nom-again', presNom);
+
+    socket.on('reset-chancellor-nom', function (data) {
+        io.emit('try-chan-nom-again', presNom);
     });
 
     socket.on('chaos-policy-enacted', function (data) {
-        topThreePolicies.splice(topThreePolicies.indexOf(data), 1);
-        var rand = Math.random(0,17) >= 7;
-        topThreePolicies.push(rand);
+        if (deck.length >= 3)
+            topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+        else
+            buildDeck();
+        
         if (data)
             fPols++;
         else
@@ -423,10 +431,23 @@ function shuffle(array) {
     return array;
 }
 
+function buildDeck() {
+    for (var i = 0; i < 11; i++) {
+        deck.push(true);
+    }
+    for (var i = 0; i < 6; i++) {
+        deck.push(false);
+    }
+
+    shuffle(deck);
+    console.log('deck: ' + deck);
+}
+
 function setRoles() {
     shuffle(shPlayers);
-
     var hIndex = 0;
+
+    buildDeck();
 
     if (shPlayers.length < 5) {
         numFascists = shPlayers.length / 2;
@@ -494,6 +515,7 @@ function nextPresident() {
 }
 
 function resetShVars() {
+    deck = [];
     shPlayers = [];
     readyPlayers = [];
     numLiberals = 0;
