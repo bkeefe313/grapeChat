@@ -248,7 +248,7 @@ io.on('connection', (socket) => {
                     rejectedGovs++;
                     votersAgainstGov = [];
                     votersForGov = [];
-                    if (rejectedGovs == 3) {
+                    if (rejectedGovs >= 3) {
                         undesirables = [];
                         io.emit('sh-chaos', {
                             f: fPols,
@@ -301,7 +301,7 @@ io.on('connection', (socket) => {
                     rejectedGovs++;
                     votersAgainstGov = [];
                     votersForGov = [];
-                    if (rejectedGovs == 3) {
+                    if (rejectedGovs >= 3) {
                         undesirables = [];
                         socket.emit('sh-chaos', {
                             f: fPols,
@@ -418,7 +418,8 @@ io.on('connection', (socket) => {
 
         socket.on('chaos-policy-enacted', function (data) {
             if (deck.length >= 3)
-                topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
+                topThreePolicies.splice(0,1);
+                topThreePolicies.push(deck.pop());
             else
                 buildDeck();
 
