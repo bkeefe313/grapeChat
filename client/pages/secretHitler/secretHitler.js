@@ -27,6 +27,8 @@ var presChoosingNextPres = false;
 var topThreePolicies = [];
 var undesirables = [];
 
+var gameNumber = '';
+
 function setup() {
     $('#controls').hide();
     $('#play-sh').hide();

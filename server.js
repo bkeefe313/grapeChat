@@ -246,6 +246,8 @@ io.on('connection', (socket) => {
                     votesForGov = 0;
                     votesAgainstGov = 0;
                     rejectedGovs++;
+                    votersAgainstGov = [];
+                    votersForGov = [];
                     if (rejectedGovs == 3) {
                         undesirables = [];
                         io.emit('sh-chaos', {
@@ -270,6 +272,8 @@ io.on('connection', (socket) => {
                     votesForGov = 0;
                     votesAgainstGov = 0;
                     rejectedGovs = 0;
+                    votersAgainstGov = [];
+                    votersForGov = [];
                 }
             }
         });
@@ -294,6 +298,8 @@ io.on('connection', (socket) => {
                     votesForGov = 0;
                     votesAgainstGov = 0;
                     rejectedGovs++;
+                    votersAgainstGov = [];
+                    votersForGov = [];
                     if (rejectedGovs == 3) {
                         undesirables = [];
                         socket.emit('sh-chaos', {
@@ -318,6 +324,8 @@ io.on('connection', (socket) => {
                     votesForGov = 0;
                     votesAgainstGov = 0;
                     rejectedGovs = 0;
+                    votersAgainstGov = [];
+                    votersForGov = [];
                 }
             }
         });
@@ -488,8 +496,8 @@ function setRoles() {
         numFascists = 2;
         numLiberals = 3
     } else if (shPlayers.length == 6) {
-        numFascists = 3;
-        numLiberals = 3
+        numFascists = 2;
+        numLiberals = 4
     } else if (shPlayers.length == 7) {
         numFascists = 3;
         numLiberals = 4;
