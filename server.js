@@ -422,6 +422,7 @@ io.on('connection', (socket) => {
                 topThreePolicies.push(deck.pop());
             } else {
                 buildDeck();
+                topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
             }
             if (data)
                 fPols++;
