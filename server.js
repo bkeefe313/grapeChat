@@ -254,6 +254,7 @@ io.on('connection', (socket) => {
                             f: fPols,
                             l: lPols
                         });
+                        rejectedGovs = 0;
                     }
                 } else if (votesForGov > votesAgainstGov) {
                     console.log("voting passed");
@@ -306,6 +307,7 @@ io.on('connection', (socket) => {
                             f: fPols,
                             l: lPols
                         })
+                        rejectedGovs = 0;
                     }
                 } else if (votesForGov > votesAgainstGov) {
                     console.log("voting passed");
