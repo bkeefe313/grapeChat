@@ -417,12 +417,12 @@ io.on('connection', (socket) => {
         });
 
         socket.on('chaos-policy-enacted', function (data) {
-            if (deck.length >= 3)
+            if (deck.length >= 3){
                 topThreePolicies.splice(0,1);
                 topThreePolicies.push(deck.pop());
-            else
+            } else {
                 buildDeck();
-
+            }
             if (data)
                 fPols++;
             else
