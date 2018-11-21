@@ -228,7 +228,7 @@ io.on('connection', (socket) => {
 
         socket.on('yes-for-gov', function (data) {
             votesForGov++;
-            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesForGov + votesAgainstGov));
             votersForGov.push(data);
 
             if (votesAgainstGov + votesForGov == shPlayers.length) {
@@ -282,7 +282,7 @@ io.on('connection', (socket) => {
 
         socket.on('no-for-gov', function (data) {
             votesAgainstGov++;
-            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesForGov + votesAgainstGov));
             votersAgainstGov.push(data);
 
             if (votesAgainstGov + votesForGov == shPlayers.length) {
