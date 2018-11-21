@@ -2,7 +2,6 @@ const express = require('express');
 const socketio = require('socket.io');
 const path = require('path');
 const app = express();
-const crashreporter = require('crashreporter');
 
 const PORT = process.env.PORT || 3000;
 const INDEX = __dirname + '/client/';
