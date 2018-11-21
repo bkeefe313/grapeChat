@@ -17,6 +17,11 @@ var users = [];
 var userColors = [];
 var lWins = 0;
 var fWins = 0;
+var nameOfHitler = 'Hitler';
+var nameOfChancellor = 'Chancellor';
+var nameOfPresident = 'President';
+var nameOfFascists = 'Fascist';
+var nameOfLiberals = 'Liberal';
 
 //resettable
 var shPlayers = [];
