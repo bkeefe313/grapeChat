@@ -315,7 +315,7 @@ function setup() {
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted.", 'green');
             $('#l-policies').html(nameOfLiberals + ' Policies: ' + data.lPols);
-            if (data.lPols == 5) {
+            if ((data.lPols == 5) && (president == currentUser)) {
                 socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
             }
             if (president == currentUser) {
