@@ -228,7 +228,7 @@ io.on('connection', (socket) => {
 
         socket.on('yes-for-gov', function (data) {
             votesForGov++;
-            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesForGov + votesAgainstGov));
             votersForGov.push(data);
 
             if (votesAgainstGov + votesForGov == shPlayers.length) {
@@ -252,7 +252,8 @@ io.on('connection', (socket) => {
                         undesirables = [];
                         io.emit('sh-chaos', {
                             f: fPols,
-                            l: lPols
+                            l: lPols,
+                            t: topThreePolicies[0]
                         });
                         rejectedGovs = 0;
                     }
@@ -281,7 +282,7 @@ io.on('connection', (socket) => {
 
         socket.on('no-for-gov', function (data) {
             votesAgainstGov++;
-            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesAgainstGov + votesAgainstGov));
+            console.log("Players: " + shPlayers + "; Votes for: " + votesForGov + "; Votes against: " + votesAgainstGov + "; Total votes: " + (votesForGov + votesAgainstGov));
             votersAgainstGov.push(data);
 
             if (votesAgainstGov + votesForGov == shPlayers.length) {
@@ -417,17 +418,26 @@ io.on('connection', (socket) => {
         });
 
         socket.on('chaos-policy-enacted', function (data) {
-            if (deck.length >= 3){
+            if (deck.length >= 3) {
                 topThreePolicies.splice(0,1);
                 topThreePolicies.push(deck.pop());
             } else {
                 buildDeck();
                 topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
             }
-            if (data)
+            if (data) {
                 fPols++;
-            else
+            } else {
                 lPols++;
+            }
+            if (lPols >= 5) {
+                lWins++;
+                io.emit('sh-game-finished', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'));
+            }
+            if (fPols >= 6) {
+                fWins++;
+                io.emit('sh-game-finished', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
+            }
             rejectedGovs = 0;
             undesirables = [];
         });

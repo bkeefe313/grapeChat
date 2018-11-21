@@ -353,16 +353,16 @@ function setup() {
         chat(data + ' Purge the game to play again.', 'cyan');
     });
 
-    socket.on('sh-chaos', function () {
+    socket.on('sh-chaos', function (data) {
         chat("3 governments have been consecutively rejected! A random policy will be enacted!");
-        if (topThreePolicies[0]) {
+        if (data.t) {
             chat("A " + nameOfFascists + " policy has been enacted in the chaos!", 'red');
             $('#f-policies').html(nameOfFascists + ' Policies: ' + (data.f + 1));
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted in the chaos!", 'green');
-            $('#f-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
+            $('#l-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
         }
-        socket.emit('chaos-policy-enacted', topThreePolicies[0]);
+        socket.emit('chaos-policy-enacted', data.t);
     });
 
     socket.on('notify-investigation', function (data) {
