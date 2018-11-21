@@ -349,7 +349,6 @@ io.on('connection', (socket) => {
             }
             rejectedGovs = 0;
             undesirables = [];
-
         });
 
         socket.on('player-investigated', function (data) {
