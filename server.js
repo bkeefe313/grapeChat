@@ -252,7 +252,8 @@ io.on('connection', (socket) => {
                         undesirables = [];
                         io.emit('sh-chaos', {
                             f: fPols,
-                            l: lPols
+                            l: lPols,
+                            t: topThreePolicies[0]
                         });
                         rejectedGovs = 0;
                     }
