@@ -612,9 +612,15 @@ function execution() {
     if (fascists.includes(president)) {
         console.log("Fascist president. Executing liberal...");
         target = liberals[Math.floor(Math.random() * (liberals.length))];
+        while (target = president) {
+            target = liberals[Math.floor(Math.random() * (liberals.length))];
+        }
     } else {
         console.log("Liberal president. Executing a random player...");
         target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
+        while (target = president) {
+            target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
+        }
     }
     killPlayer(target);
     console.log("Executing " + target);
@@ -886,5 +892,12 @@ function resetShVars() {
     numBots = 0;
     botNominee = [];
     currentBot = 0;
-    gameOver = 0;
+    gameOver = false;
+    fCardCount = 0;
+    fascistPres = false;
+    fascistChan = false;
+    presPolicies = [];
+    chanPolicy = false;
+    peekResult = 0;
+    target = '';
 }
