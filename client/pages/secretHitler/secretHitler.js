@@ -208,11 +208,11 @@ function setup() {
         for(var i = 0; i < data.va.length; i++){
             chat(data.va[i] + " voted AGAINST this government!", 'red');
         }
-        
+
         for(var i = 0; i < data.vf.length; i++){
             chat(data.vf[i] + " voted FOR this government!", 'green');
         }
-        
+
         chat("The election failed. The next nominee for " + nameOfPresident + " is " + data.presNom);
         $('#' + data.chan).attr('class', 'player');
         $('#' + data.pres).attr('class', 'player');
@@ -240,14 +240,14 @@ function setup() {
     socket.on('voting-passed', function (data) {
         president = data.pres;
         chancellor = data.chan;
-        
+
         for(var i = 0; i < data.va.length; i++){
             chat(data.va[i] + " voted AGAINST this government!", 'red');
         }
         for(var i = 0; i < data.vf.length; i++){
             chat(data.vf[i] + " voted FOR this government!", 'green');
         }
-        
+
         chat("The election was successful. " + president + " is the new " + nameOfPresident + " and " + chancellor + " is the new " + nameOfChancellor + ".", 'cyan');
         if (president == currentUser) {
             presChoosePolicies(data.top);
@@ -315,7 +315,7 @@ function setup() {
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted.", 'green');
             $('#l-policies').html(nameOfLiberals + ' Policies: ' + data.lPols);
-            if (data.lPols == 5) {
+            if ((data.lPols == 5) && (president == currentUser)) {
                 socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
             }
             if (president == currentUser) {
