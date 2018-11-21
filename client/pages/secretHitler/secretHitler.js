@@ -360,7 +360,7 @@ function setup() {
             $('#f-policies').html(nameOfFascists + ' Policies: ' + (data.f + 1));
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted in the chaos!", 'green');
-            $('#f-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
+            $('#l-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
         }
         socket.emit('chaos-policy-enacted', data.t);
     });
