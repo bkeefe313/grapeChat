@@ -670,6 +670,7 @@ function checkVotes() {
             console.log("voting passed");
             president = presNom;
             chancellor = chanNom;
+            undesirables = [];
             if (shPlayers.length > 5) {
                 undesirables.push(president);
             }
@@ -713,7 +714,6 @@ function nextRound(data) {
             u: undesirables
         });
         autoChancellor();
-        undesirables.splice(0, 2);
     } else {
         turnNum++;
         presNom = data;
@@ -724,7 +724,6 @@ function nextRound(data) {
             chan: chancellor,
             u: undesirables
         });
-        undesirables.splice(0, 2);
     }
 }
 
