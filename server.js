@@ -232,7 +232,9 @@ io.on('connection', (socket) => {
         socket.on('join-sh-chancellor', function (data) {
             socket.join('sh-chancellor');
             console.log(chancellor + " is the new chancellor.");
-            botPres();
+            if (!gameOver) {
+                botPres();
+            }
         });
 
         socket.on('sh-end-game', function (data) {
@@ -297,8 +299,8 @@ io.on('connection', (socket) => {
             });
             socket.leave('sh-chancellor');
             chanPolicy = data;
-            botPowers();
             printResults();
+            botPowers();
         });
 
         socket.on('next-round', function (data) {
@@ -331,7 +333,6 @@ io.on('connection', (socket) => {
                 topThreePolicies.push(deck.pop());
             } else {
                 buildDeck();
-                topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
             }
             if (data) {
                 fPols++;
@@ -461,6 +462,7 @@ function botNo() {
 function botPres() {
     fCardCount = 0;
     if (bots.includes(president)) {
+        console.log("A bot is president. Selecting policies...")
         for (var i = 0; i < topThreePolicies.length; i++) {
             if(topThreePolicies[i]) {
                 fCardCount++;
@@ -484,6 +486,7 @@ function botChan() {
     fCardCount = 0;
     console.log("Top 3: " + topThreePolicies);
     if (bots.includes(chancellor)) {
+        console.log("A bot is chancellor. Enacting a policy...")
         for (var i = 0; i < presPolicies.length; i++) {
             if(presPolicies[i]) {
                 fCardCount++;
@@ -511,8 +514,8 @@ function botChan() {
             players: shPlayers.length,
             top: topThreePolicies
         });
-        botPowers();
         printResults();
+        botPowers();
     }
 }
 
@@ -526,13 +529,13 @@ function printResults() {
   console.log("President: " + president);
   console.log("Chancellor: " + chancellor);
   presPolicies = [];
-  chanPolicy = false;
   fCardCount = 0;
 }
 
 //Bot uses presidential powers
 function botPowers() {
     if (bots.includes(president)) {
+        console.log("A bot is president. Checking powers...")
         if (chanPolicy) {
             if (fPols == 3) {
                 policyPeek();
@@ -546,6 +549,7 @@ function botPowers() {
                 nextRound('');
             }
         } else {
+            console.log("Liberal policy enacted. No presidential power.")
             if ((lPols == 5) && (bot.includes(president))) {
                 lWins++;
                 io.emit('sh-game-finished', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'));
@@ -612,13 +616,15 @@ function execution() {
     if (fascists.includes(president)) {
         console.log("Fascist president. Executing liberal...");
         target = liberals[Math.floor(Math.random() * (liberals.length))];
-        while (target = president) {
+        while (target == president) {
+            console.log("Target: " + target);
             target = liberals[Math.floor(Math.random() * (liberals.length))];
         }
     } else {
         console.log("Liberal president. Executing a random player...");
         target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
-        while (target = president) {
+        while (target == president) {
+            console.log("Target: " + target);
             target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
         }
     }
@@ -668,7 +674,10 @@ function checkVotes() {
             console.log("voting passed");
             president = presNom;
             chancellor = chanNom;
-            undesirables.push(president);
+            undesirables = [];
+            if (shPlayers.length > 5) {
+                undesirables.push(president);
+            }
             undesirables.push(chancellor);
             io.emit('voting-passed', {
                 pres: president,
@@ -709,7 +718,6 @@ function nextRound(data) {
             u: undesirables
         });
         autoChancellor();
-        undesirables.splice(0, 2);
     } else {
         turnNum++;
         presNom = data;
@@ -720,7 +728,6 @@ function nextRound(data) {
             chan: chancellor,
             u: undesirables
         });
-        undesirables.splice(0, 2);
     }
 }
 
@@ -764,15 +771,18 @@ function shuffle(array) {
 }
 
 function buildDeck() {
-    for (var i = 0; i < 11; i++) {
+    deck = [];
+    topThreePolicies = [];
+    for (var i = 0; i < (11 - fPols); i++) {
         deck.push(true);
     }
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < (6 - lPols); i++) {
         deck.push(false);
     }
-
     shuffle(deck);
+    topThreePolicies = [deck.pop(), deck.pop(), deck.pop()];
     console.log('deck: ' + deck);
+    console.log('top 3: ' + topThreePolicies);
 }
 
 function setRoles() {
