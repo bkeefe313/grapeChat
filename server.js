@@ -670,7 +670,9 @@ function checkVotes() {
             console.log("voting passed");
             president = presNom;
             chancellor = chanNom;
-            undesirables.push(president);
+            if (shPlayers.length > 5) {
+                undesirables.push(president);
+            }
             undesirables.push(chancellor);
             io.emit('voting-passed', {
                 pres: president,
