@@ -38,7 +38,7 @@ var chanNom = '';
 var presNom = '';
 var prevPresNom = '';
 var presIndex = 0;
-var fPols = 0;
+var fPols = 3;
 var lPols = 0;
 var turnNum = 0;
 var deck = [];
@@ -612,13 +612,15 @@ function execution() {
     if (fascists.includes(president)) {
         console.log("Fascist president. Executing liberal...");
         target = liberals[Math.floor(Math.random() * (liberals.length))];
-        while (target = president) {
+        while (target == president) {
+            console.log("Target: " + target);
             target = liberals[Math.floor(Math.random() * (liberals.length))];
         }
     } else {
         console.log("Liberal president. Executing a random player...");
         target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
-        while (target = president) {
+        while (target == president) {
+            console.log("Target: " + target);
             target = shPlayers[Math.floor(Math.random() * (shPlayers.length))];
         }
     }
