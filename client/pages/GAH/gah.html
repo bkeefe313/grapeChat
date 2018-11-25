@@ -11,13 +11,29 @@
     <div id="content">
         <div id="logged-in"></div>
         <br>
+        <button id="purge-gah">PURGE GAME</button>
+        <input type="password" id="purge-password">
+        <br>
         <nav>
             <p>Navigation</p>
-            <li><a href="/index.html">Chat</a></li>
+            <li><a id="chat-link" href="/index.html">Chat</a></li>
 
         </nav>
         <br>
         <h1>Grapes Against Humanity</h1>
+        <button id="join-leave-gah" class="not-in-game">Join Game</button>
+        <button id="ready-toggle" class='unready-button'>Ready Up</button>
+        <p style="margin-top: 10px">Players:</p>
+        <br>
+        <div id="player-list"></div>
+        <div id="judge-cards">
+            <p>Judge Cards:</p>
+            <button id="confirm-judge-choice">Confirm</button>
+        </div>
+        <div id="player-cards">
+            <p>Player Cards:</p>
+            <button id="confirm-card">Confirm</button>
+        </div>
         <br>
         <div id="log">
             <div class="message">Message Feed:</div>
@@ -28,12 +44,21 @@
             <br>
             <button id="send" disabled>Send</button>
         </div>
+        <div id="pack-choices">
+            <input type="checkbox" id="base-pack">
+            <label for="base-pack">Base Pack</label>
+            <input type="checkbox" id="personal-pack">
+            <label for="personal-pack">Personal Pack</label>
+            <button id="confirm-packs">Confirm Packs</button>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
     <script src="gah.js"></script>
+    
+    <div id="credits">Cards Against Humanity is made and distributed by © 2016 GOAT, WOLF, & CABBAGE, under the license <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC SA–BY–NC 4.0</a>. This version has been edited from the original. I do not own and did not originally create the concept.</div>
 </body>
 
 </html>
