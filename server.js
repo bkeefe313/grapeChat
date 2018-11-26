@@ -1165,12 +1165,12 @@ function buildGAHWhite() {
     whiteDeck = [];
     if (basePack) {
         for (var i = 0; i < basePackWhite.length; i++)
-            if(gahDiscard(basePackBlue[i]))
+            if(!gahDiscard.includes(basePackBlue[i]))
                 whiteDeck.push(basePackWhite[i]);
     }
     if (personalPack) {
         for (var i = 0; i < personalPackWhite.length; i++)
-            if(gahDiscard(basePackBlue[i]))
+            if(!gahDiscard.includes(basePackBlue[i]))
                 whiteDeck.push(personalPackWhite[i]);
     }
 
