@@ -86,13 +86,14 @@ var fWins = 0;
     var submittedCards = [];
     var submittedCardUsers = [];
     var playerScores = [];
+    var gahDiscard = [];
 }
 //GAH packs
 {
-    var basePackBlue = ["Call your doctor if you experience ____ for more than 4 hours.", "Today I learned that ____ can lead to erectile dysfunction.", "Airport security stopped and searched me when they noticed ____.", "I jumped off the bridge as soon as I saw ____.", "Elon Musk's new project: ____.", "____? Sounds like a personal problem.", "Kids today need to learn about ____.", "My dog is ____, I don't know what to do.", "Oh frick! What if my mom sees me when I'm ____!", "Four score and seven years ago, our fathers brought forth ____...", "It is 2050. ____ has taken the world by storm, and human life seems hopeless.", "Try new Super Lunchables! Now with extra ____!", "You know ____ is just a ploy made by the Chinese government, right?", "If you ask me, people who are ____ have no place in this country."];
-    var basePackWhite = ["detective pikachu", "that one song that goes 'ooooh you touch my tralala'", "putting up christmas lights on Thanksgiving", "a gaggle of geese", "Ayatollah Khomeini", "a slow and agonizing descent into madness", "Leonardo DiCaprio's <b>one</b> oscar", "a pair of carjacks + my nipples", "dividing by zero", "CNN", "being addicted to eating rocks", "invading poland", "a broken bungie cable", "slaughtering innocent Chinese women and children at Nanjing", "a sumo wrestler sitting on my face", "underwear masks", "global warming", "ethnic cleansing"];
+    var basePackBlue = ["Call your doctor if you experience ____ for more than 4 hours.", "Today I learned that ____ can lead to erectile dysfunction.", "Airport security stopped and searched me when they noticed ____.", "I jumped off the bridge as soon as I saw ____.", "Elon Musk's new project: ____.", "____? Sounds like a personal problem.", "Kids today need to learn about ____.", "My dog is ____, I don't know what to do.", "Oh frick! What if my mom sees me when I'm ____!", "Four score and seven years ago, our fathers brought forth ____...", "It is 2050. ____ has taken the world by storm, and human life seems hopeless.", "Try new Super Lunchables! Now with extra ____!", "You know ____ is just a ploy made by the Chinese government, right?", "If you ask me, people who are ____ have no place in this country.", "You know what's better than 24? ____.", "I procrastinate way too much. I've been ____ for the past 20 minutes instead of doing homework."];
+    var basePackWhite = ["detective pikachu", "listening to that one song that goes 'ooooh you touch my tralala'", "putting up christmas lights on Thanksgiving", "a gaggle of geese", "Ayatollah Khomeini", "a slow and agonizing descent into madness", "Leonardo DiCaprio's *one* oscar", "a pair of carjacks + my nipples", "dividing by zero", "CNN", "being addicted to eating rocks", "invading poland", "a broken bungie cable", "slaughtering innocent Chinese women and children at Nanjing", "a sumo wrestler sitting on my face", "underwear masks", "global warming", "ethnic cleansing", "avacado toast", "a star-shaped penis bulge", "burning alive in the middle of Antarctica", "my supersuit", "25 dead horses all being beaten at once", "kids dressed up as Fortnite skins for Halloween", "the birds and the bees", "a trash can full of nothing but right index fingers", "slavery", "giving grandma 2 cans of dogfood for dinner instead of just 1"];
     var personalPackBlue = ["Gentlemen, the next time I see ____ it's a class jug.", "According to <i>An Introduction to Catholic Ethics</i>, all ethical teachings can be explained in a metaphor about ____.", "Fallout 76 isn't bad, it just isn't as good as ____.", "Nick Cochrin is such a liberal. I mean come on, look at how much he loves ____!", "Gus enjoys ____ way too much.", "____? That's not very epic...", "____? That ain't very cash money of you.", "The new siege operator takes ____ to a whole new level.", "Sea of Thieves is a good game. The new update brought in ____!", "Ian Bowen left Rockhurst because of ____.", "Peanut butter is best with ____.", "For Honor isn't dead, it's ____."];
-    var personalPackWhite = ["bengay", "Mr. Wooten", "Rhonda", "Henry Retardo", "David Spitz", "Juuling in the third floor bathroom", "Coach Moe", "Nutting in No Nut Novemeber", "time and space", "Right Wing Populism", "Lucas Richardson", "Gillcrist's beard", "Red Dead Redemption 2", "Nick Cockring", "Ian", "Mr. Valentini", "medium-rare ribeye steak", "a liberal", "slig", "homosexuals", "the Victory App", "romaine lettuce", "an epic victory royale", "a pair of gross brown shoes", "a marshmallow someone named Keith", "voiceoverpete", "Hyperdimension Neptunia", "<i>Killing God</i>, an essay by Sal Nigro", "steamed hams", "a dead game"];
+    var personalPackWhite = ["bengay", "Mr. Wooten", "Rhonda", "Henry Retardo", "David Spitz", "Juuling in the third floor bathroom", "Coach Moe", "Nutting in No Nut Novemeber", "time and space", "Right Wing Populism", "Lucas Richardson", "Gillcrist's beard", "Red Dead Redemption 2", "Nick Cockring", "Ian", "Mr. Valentini", "medium-rare ribeye steak", "a liberal", "slig", "homosexuals", "the Victory App", "romaine lettuce", "an epic victory royale", "a pair of gross brown shoes", "a marshmallow someone named Keith", "voiceoverpete", "Hyperdimension Neptunia", '"Killing God, an essay by Sal Nigro', "steamed hams", "a dead game", "Yung Gravy"];
 }
 
 io.on('connection', (socket) => {
@@ -456,6 +457,7 @@ io.on('connection', (socket) => {
         //players left lobby
         socket.on('leave-gah', function (data) {
             socket.leave('gah-game');
+            playerScores.splice(gahPlayers.indexOf(data), 1);
             gahPlayers.splice(data, 1);
             gahReadyPlayers.splice(data, 1);
             io.to('gah-page').emit('player-left-gah', data);
@@ -505,6 +507,7 @@ io.on('connection', (socket) => {
             socket.leave('gah-game');
         });
 
+        //new round begins
         socket.on('new-round-gah', function () {
             gahJudge = nextGAHJudge();
             console.log("next round");
@@ -516,11 +519,13 @@ io.on('connection', (socket) => {
             });
         });
 
+        //draw initial 6 cards
         socket.on('get-cards-initial-gah', function () {
             var initialCards = [whiteDeck.pop(), whiteDeck.pop(), whiteDeck.pop(), whiteDeck.pop(), whiteDeck.pop(), whiteDeck.pop()];
             socket.emit('initial-cards-gah', initialCards);
         });
 
+        //activate selected packs
         socket.on('selected-packs-gah', function (data) {
             if (data.includes('base')) {
                 basePack = true;
@@ -530,16 +535,19 @@ io.on('connection', (socket) => {
             }
         });
 
+        //draw a card (not done by judge)
         socket.on('draw-card-gah', function () {
             socket.emit('card-drawn-gah', drawWhiteCard());
         });
 
+        //card was chosen by players
         socket.on('card-chosen-gah', function (data) {
             submittedCardCount++;
             submittedCards.push(data.t);
             submittedCardUsers.push(data.u);
             io.to('gah-game').emit('card-submitted-gah');
             if (submittedCardCount == gahPlayers.length - 1) {
+                gahDiscard.splice(gahDiscard.indexOf(data.t), 1);
                 io.to('gah-game').emit('start-judging-gah', {
                     t: submittedCards,
                     u: submittedCardUsers,
@@ -551,6 +559,7 @@ io.on('connection', (socket) => {
             }
         });
 
+        //winning card was chosen by judge
         socket.on('judge-chose-winner-gah', function (data) {
             playerScores[gahPlayers.indexOf(data.u)]++;
             var scr = playerScores[gahPlayers.indexOf(data.u)];
@@ -751,6 +760,7 @@ function botPowers() {
     }
 }
 
+//bot looks at top 3 policies
 function policyPeek() {
     fCardCount = 0;
     for (var i = 0; i < topThreePolicies.length; i++) {
@@ -767,6 +777,7 @@ function policyPeek() {
     nextRound('');
 }
 
+//bot false report of policy peek
 function policyLie() {
     console.log("Fascist president. Lying...");
     if (fCardCount == 3) {
@@ -777,12 +788,14 @@ function policyLie() {
     peekReport();
 }
 
+//bot true report of policy peek
 function policyTruth() {
     console.log("Liberal president. Reporting...");
     peekResult = fCardCount;
     peekReport();
 }
 
+//bot sends true or false report to chat of policy peek
 function peekReport() {
     var message = "";
     if (peekResult == 3) {
@@ -802,6 +815,7 @@ function peekReport() {
     console.log(president + ': ' + report.message);
 }
 
+//bot chooses a player to execute
 function execution() {
     if (fascists.includes(president)) {
         console.log("Fascist president. Executing liberal...");
@@ -1137,6 +1151,7 @@ function resetGAHVars() {
     playerScores = [];
 }
 
+//builds both decks. refer to white/blue build functions
 function buildGAHDecks() {
     buildGAHWhite();
     buildGAHBlue();
@@ -1145,20 +1160,24 @@ function buildGAHDecks() {
 
 }
 
+//builds white deck from pack arrays and shuffles
 function buildGAHWhite() {
     whiteDeck = [];
     if (basePack) {
         for (var i = 0; i < basePackWhite.length; i++)
-            whiteDeck.push(basePackWhite[i]);
+            if(gahDiscard(basePackBlue[i]))
+                whiteDeck.push(basePackWhite[i]);
     }
     if (personalPack) {
         for (var i = 0; i < personalPackWhite.length; i++)
-            whiteDeck.push(personalPackWhite[i]);
+            if(gahDiscard(basePackBlue[i]))
+                whiteDeck.push(personalPackWhite[i]);
     }
 
     shuffle(whiteDeck);
 }
 
+//builds blue deck from pack arrays and shuffles
 function buildGAHBlue() {
     blueDeck = [];
     if (basePack) {
@@ -1173,16 +1192,21 @@ function buildGAHBlue() {
     shuffle(blueDeck);
 }
 
+//pops white card from white deck and adds it to discard
 function drawWhiteCard() {
     if (whiteDeck.length > 0) {
         return whiteDeck.pop();
     } else {
         buildGAHWhite();
     }
+    
+    var cardDrawn = whiteDeck.pop();
+    gahDiscard.push(cardDrawn);
 
     return whiteDeck.pop();
 }
 
+//pops blue card from blue deck
 function drawBlueCard() {
     if (blueDeck.length > 0) {
         return blueDeck.pop();
