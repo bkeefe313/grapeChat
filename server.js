@@ -426,7 +426,8 @@ io.on('connection', (socket) => {
         socket.on('on-gah-page', function () {
             socket.emit('show-gah-players', {
                 p: gahPlayers,
-                rp: gahReadyPlayers
+                rp: gahReadyPlayers,
+                gs: gahGameActive
             });
             socket.join('gah-page');
         });

@@ -27,6 +27,11 @@ function setup() {
             }
         }
         players = data.p;
+        
+        if(data.gs){
+            $('#join-leave-gah').hide();
+            $('#logged-in').append('<p class="warning">You cannot join a game in progress.</div>')
+        }
     });
 
     socket.on('g-message', function (data) {
@@ -61,6 +66,7 @@ function setup() {
     socket.on('start-gah', function (data) {
         chat('Starting game with ' + data.num + ' players...', 'darkgreen');
         socket.emit('get-cards-initial-gah');
+        $('#ready-toggle').hide();
         if(currentUser == data.j)
             socket.emit('new-round-gah');
     });
