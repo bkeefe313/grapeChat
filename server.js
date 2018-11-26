@@ -465,7 +465,7 @@ io.on('connection', (socket) => {
             gahReadyPlayers.push(data);
             io.to('gah-page').emit('gah-ready', data);
 
-            if (gahPlayers.length >= 3 && gahPlayers == gahReadyPlayers) {
+            if (gahPlayers.length >= 3 && gahPlayers.length == gahReadyPlayers.length) {
                 buildGAHDecks();
                 if (whiteDeck.length >= 1 && blueDeck.length >= 1) {
                     for (var i = 0; i < gahPlayers.length; i++) {
