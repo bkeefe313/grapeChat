@@ -13,6 +13,7 @@ var choosingWinner = false;
 var confirmingWinner = false;
 var possibleWinners = [];
 var possibleCardWinners = [];
+var gameState = false;
 
 function setup() {
 
@@ -29,6 +30,7 @@ function setup() {
         players = data.p;
         
         if(data.gs){
+            gameState = true;
             $('#join-leave-gah').hide();
             $('#logged-in').append('<p class="warning">You cannot join a game in progress.</div>')
         }
@@ -59,6 +61,7 @@ function setup() {
         resetVars();
         var int = setInterval(function () {
             location.reload();
+            gameState = false;
             clearInterval(int);
         }, 5000);
     });
@@ -67,6 +70,7 @@ function setup() {
         chat('Starting game with ' + data.num + ' players...', 'darkgreen');
         socket.emit('get-cards-initial-gah');
         $('#ready-toggle').hide();
+        gameState = true;
         if(currentUser == data.j)
             socket.emit('new-round-gah');
     });
@@ -188,6 +192,9 @@ function setup() {
             socket.emit('leave-gah', currentUser);
             disableControls();
             inLobby = false;
+            if(gameState){
+                $(this).hide();
+            }
         }
     });
 
@@ -314,10 +321,17 @@ function enteredPage() {
 }
 
 function resetVars() {
-    inLobby = false;
-    players = [];
-    whiteDeck = [];
-    blueDeck = [];
+     players = [];
+     whiteDeck = [];
+     blueDeck = [];
+     host = false;
+     choosingCard = false;
+     confirmingCard = false;
+     choosingWinner = false;
+     confirmingWinner = false;
+     possibleWinners = [];
+     possibleCardWinners = [];
+     gameState = false;
 }
 
 function choosePacks() {
