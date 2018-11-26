@@ -1,6 +1,6 @@
 {
   "name": "grapechat",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "chat app for friends with secret hitler and cards against humanity clones",
   "main": "server.js",
   "scripts": {
