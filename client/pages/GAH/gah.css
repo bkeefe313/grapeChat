@@ -92,6 +92,7 @@ a:hover {
     margin-top: 20px;
     padding: 5px;
     display: inline-block;
+    overflow-x: auto;
 }
 
 #player-cards {
@@ -102,6 +103,7 @@ a:hover {
     margin-top: 20px;
     padding: 5px;
     display: inline-block;
+    overflow-x: auto;
 }
 
 #player-list {
@@ -186,6 +188,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .chosen-card {
@@ -198,6 +201,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .judge-chosen-card {
@@ -210,6 +214,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .white-card {
@@ -222,6 +227,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .white-card:hover {
@@ -238,6 +244,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 .judge-choice:hover {
@@ -266,6 +273,7 @@ a:hover {
     vertical-align: text-top;
     padding: 5px;
     margin-right: 10px;
+    overflow-y: auto;
 }
 
 #credits {
