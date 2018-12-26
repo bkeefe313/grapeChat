@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link href='secretHitler.css' rel='stylesheet'>
+    <link href='sh2.css' rel='stylesheet'>
     <title>GrapeChat: Secret Hitler</title>
 </head>
 
@@ -25,28 +25,53 @@
             <button style="margin-bottom:10px" id="ready-up">Ready Up</button>
             <button style="margin-bottom:10px" id="unready">Unready</button>
         </div>
-        <p style="margin-bottom:10px; margin-top: 10px;">Player List</p>
-        <p id="f-policies"></p>
-        <p id="l-policies"></p>
-        <div id="hud-top">
-            <div id="players">
+        <p style="margin-bottom:10px;">Player List</p>
+        <div id="players">
 
+        </div>
+        <div id="tabletop">
+            <div class="board-liberal">
+                <p class="board-title">LIBERAL</p>
+                <div id="l-pols-board">
+                    <div id="l1" class="l-pol-empty"></div>
+                    <div id="l2" class="l-pol-empty"></div>
+                    <div id="l3" class="l-pol-empty"></div>
+                    <div id="l4" class="l-pol-empty"></div>
+                    <div id="l5" class="l-pol-empty"></div>
+                </div>
             </div>
-            <div id="abilities">
+            <div id="pol-deck">
+                <div style="border: dotted blue 2px; text-align: center; width: 80%; height: 80%; margin:auto; margin-top: 12.5%;">Draw</div>
+                <div id="draw-label" style="margin: auto; width: 80%;"></div>
+            </div>
+            <div class="board-fascist" id="board-5-6">
+                <p class="board-title" style="color: darkred;">FASCIST</p>
+                <div id="f-pols-board">
+                    <div id="f1" class="f-pol-empty"></div>
+                    <div id="f2" class="f-pol-empty"></div>
+                    <div id="f3" class="f-pol-empty"></div>
+                    <div id="f4" class="f-pol-empty"></div>
+                    <div id="f5" class="f-pol-empty"></div>
+                    <div id="f6" class="f-pol-empty"></div>
+                </div>
+            </div>
+            <div id="pol-discard">
+                <div style="border: dotted blue 2px; text-align: center; width: 80%; height: 80%; margin:auto; margin-top: 12.5%;">Discard</div>
+                <div id="discard-label" style="margin: auto; width: 80%;"></div>
+            </div>
+        </div>
+        <div id="hud-top">
+            <div id="cards">
+                <p id="discard-warning">Choose policies to PASS ON or ENACT</p>
+                <button id="card-a"></button>
+                <button id="card-c"></button>
+                <button id="card-b"></button>
             </div>
         </div>
         <div id="hud-bottom">
             <div id="chat">
                 <div id="log">
-                    <div class="message">Message Feed:</div>
-                </div>
-            </div>
-            <div id="hand">
-                <div class=" message ">Hand: (Choose the cards to GIVE TO the chancellor)</div>
-                <div id="cards">
-                    <button id="card-a"></button>
-                    <button id="card-b"></button>
-                    <button id="card-c"></button>
+                    <div style="font-family:fantasy;" class="message">Message Feed:</div>
                 </div>
             </div>
             <textarea id="notes">*ERASE THESE DIRECTIONS TO TYPE NOTES* For this game, you will be assigned a Liberal, Fascist, or Hitler (who is also a Fascist). The Fascists must enact 6 policies of theirs or elect Hitler as Chancellor after enacting 3. The Liberals must enact 5 policies or assassinate Hitler. Each turn, a presidential candidate will be nominated, indicated by the blue outline. This player can choose a Chancellor candidate (indicated with red outline), and both these players are voted on. If the vote passes, then the president chooses 2 policies from a random 3 to give to the Chancellor. The Chancellor then must choose 1 of those two to enact. If a fascist policy passes, a new ability becomes available (they include: Investigate, Special Election, Policy Peek, and Execution), which must be used before the turn ends. If 5 fascist policies are enacted, then policy options can all be discarded if the president and chancellor agree. After the president enacts a policy and uses an ability (if applicable), a new election is held. However, the last ELECTED president or chancellor cannot be chosen as Chancellor.</textarea>

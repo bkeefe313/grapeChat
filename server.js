@@ -90,10 +90,10 @@ var fWins = 0;
 }
 //GAH packs
 {
-    var basePackBlue = ["Call your doctor if you experience ____ for more than 4 hours.", "Today I learned that ____ can lead to erectile dysfunction.", "Airport security stopped and searched me when they noticed ____.", "I jumped off the bridge as soon as I saw ____.", "Elon Musk's new project: ____.", "____? Sounds like a personal problem.", "Kids today need to learn about ____.", "My dog seems to be ____, I don't know what to do.", "Oh frick! What if my mom sees me when I'm ____!", "Four score and seven years ago, our fathers brought forth ____...", "It is 2050. ____ has taken the world by storm, and human life seems hopeless.", "Try new Super Lunchables! Now with extra ____!", "You know ____ is just a ploy made by the Chinese government, right?", "If you ask me, people who are ____ have no place in this country.", "You know what's better than 24? ____.", "I procrastinate way too much. I've been ____ for the past 20 minutes instead of doing homework.", "How dare you make such an accusation, I am not ____!", "Hey, I get it. You're just tired of ____.", "Alright, don't say I didn't warn you! I'm ____!", "Have you heard about the most recent government scandal? Donald Trump is ____.", "I was searching through the garbage when I found it: ____.", "Juul Labs is introducing a new flavor: ____."];
-    var basePackWhite = ["detective pikachu", "listening to that one song that goes 'ooooh you touch my tralala'", "putting up christmas lights on Thanksgiving", "a gaggle of geese", "Ayatollah Khomeini", "a slow and agonizing descent into madness", "Leonardo DiCaprio's *one* oscar", "a pair of carjacks + my nipples", "dividing by zero", "CNN", "being addicted to eating rocks", "invading poland", "a broken bungie cable", "slaughtering innocent Chinese women and children at Nanjing", "a sumo wrestler sitting on my face", "underwear masks", "global warming", "ethnic cleansing", "avacado toast", "a star-shaped penis bulge", "burning alive in the middle of Antarctica", "my supersuit", "25 dead horses all being beaten at once", "kids dressed up as Fortnite skins for Halloween", "the birds and the bees", "a trash can full of nothing but right index fingers", "slavery", "giving grandma 2 cans of dogfood for dinner instead of just 1", "saying the n-word", "midget porn", "Lil Tay", "dad beating me in a drunken frenzy", "slipping 3 viagra's into grandpa's scotch", "killing Jesus again", "putting a bomb inside of my dog's stomach and blowing it up on the road when people come by to help him", "slashing my neighbor's tires", "German engineering", "dangling a quadriplegic's severed arms and legs in front of him", "a bowling ball with 4 holes", "a micropenis", "a penny with Robert E. Lee on it", "a third trimester abortion", "Lou Gehrig's disease", "a McRib sandwich", "premature ejaculation", "a brain aneurysm", "using your epipen on yourself for the rush while the 5 year old at the table next to you dies"];
-    var personalPackBlue = ["Gentlemen, the next time I see ____ it's a class JUG.", "According to <i>An Introduction to Catholic Ethics</i>, all ethical teachings can be explained in a metaphor about ____.", "Fallout 76 isn't bad, it just isn't as good as ____.", "Nick Cochran is such a liberal. I mean come on, look at how much he loves ____!", "Gus enjoys ____ way too much.", "____? That's not very epic...", "____? That ain't very cash money of you.", "The new siege operator takes ____ to a whole new level.", "Sea of Thieves is a good game. The new update brought in ____!", "Ian Bowen left Rockhurst because of ____.", "Peanut butter is best with ____.", "For Honor isn't dead, it's ____.", "Okay, so basically, I’m ____.", "____ kills love.", 'I asked Darby why I deserve JUG. He said I was "____".', "Today in Mr. Wickenhauser's class, we learned about ____!"];
-    var personalPackWhite = ["bengay", "Mr. Wooten", "Rhonda", "Henry Retardo", "David Spitz", "Juuling in the third floor bathroom", "Coach Moe", "Nutting in No Nut Novemeber", "time and space", "Right Wing Populism", "Lucas Richardson", "Gillcrist's beard", "Red Dead Redemption 2", "Nick Cockring", "Ian", "Mr. Valentini", "medium-rare ribeye steak", "a liberal", "slig", "homosexuals", "the Victory App", "romaine lettuce", "an epic victory royale", "a pair of gross brown shoes", "a marshmallow someone named Keith", "voiceoverpete", "Hyperdimension Neptunia", '"Killing God", an essay by Sal Nigro', "steamed hams", "a dead game", "Yung Gravy", "Chris Elmore's Tinder account", "splooge", "sully's glistening dome of a head", "watching porn on my TI-84 Plus CE", "playing DOOM on an etch-a-sketch", "a Sprite™ Cranberry"];
+    var basePackBlue = ["Call your doctor if you experience ____ for more than 4 hours.", "Today I learned that ____ can lead to erectile dysfunction.", "Airport security stopped and searched me when they noticed ____.", "I jumped off the bridge as soon as I saw ____.", "Elon Musk's new project: ____.", "____? Sounds like a personal problem.", "Kids today need to learn about ____.", "My dog seems to be ____, I don't know what to do.", "Oh frick! What if my mom sees me when I'm ____!", "Four score and seven years ago, our fathers brought forth ____...", "It is 2050. ____ has taken the world by storm, and human life seems hopeless.", "Try new Super Lunchables! Now with extra ____!", "You know ____ is just a ploy made by the Chinese government, right?", "If you ask me, people who are ____ have no place in this country.", "You know what's better than 24? ____.", "I procrastinate way too much. I've been ____ for the past 20 minutes instead of doing homework.", "How dare you make such an accusation, I am not ____!", "Hey, I get it. You're just tired of ____.", "Alright, don't say I didn't warn you! I'm ____!", "Have you heard about the most recent government scandal? Donald Trump is ____.", "I was searching through the garbage when I found it: ____.", "Juul Labs is introducing a new flavor: ____.", "The most reliable news comes from sources that write about ____.", "I wish politics weren't so polarized. Even ____ is politicized."];
+    var basePackWhite = ["detective pikachu", "listening to that one song that goes 'ooooh you touch my tralala'", "putting up christmas lights on Thanksgiving", "a gaggle of geese", "Ayatollah Khomeini", "a slow and agonizing descent into madness", "Leonardo DiCaprio's *one* oscar", "a pair of carjacks + my nipples", "dividing by zero", "CNN", "being addicted to eating rocks", "invading poland", "a broken bungie cable", "slaughtering innocent Chinese women and children at Nanjing", "a sumo wrestler sitting on my face", "underwear masks", "global warming", "ethnic cleansing", "avacado toast", "a star-shaped penis bulge", "burning alive in the middle of Antarctica", "my supersuit", "25 dead horses all being beaten at once", "kids dressed up as Fortnite skins for Halloween", "the birds and the bees", "a trash can full of nothing but right index fingers", "slavery", "giving grandma 2 cans of dogfood for dinner instead of just 1", "saying the n-word", "midget porn", "Lil Tay", "dad beating me in a drunken frenzy", "slipping 3 viagra's into grandpa's scotch", "killing Jesus again", "putting a bomb inside of my dog's stomach and blowing it up on the road when people come by to help him", "slashing my neighbor's tires", "German engineering", "dangling a quadriplegic's severed arms and legs in front of him", "a bowling ball with 4 holes", "a micropenis", "a penny with Robert E. Lee on it", "a third trimester abortion", "Lou Gehrig's disease", "a McRib sandwich", "premature ejaculation", "a brain aneurysm", "using your epipen on yourself for the rush while the 5 year old at the table next to you dies", "anime tiddies", "not getting hard when she's naked right in front of you"];
+    var personalPackBlue = ["Gentlemen, the next time I see ____ it's a class JUG.", "According to <i>An Introduction to Catholic Ethics</i>, all ethical teachings can be explained in a metaphor about ____.", "Fallout 76 isn't bad, it just isn't as good as ____.", "Nick Cochran is such a liberal. I mean come on, look at how much he loves ____!", "Gus enjoys ____ way too much.", "____? That's not very epic...", "____? That ain't very cash money of you.", "The new siege operator takes ____ to a whole new level.", "Sea of Thieves is a good game. The new update brought in ____!", "Ian Bowen left Rockhurst because of ____.", "Peanut butter is best with ____.", "Okay, so basically, I’m ____.", "____ kills love.", 'I asked Darby why I deserve JUG. He said I was "____".', "Today in Mr. Wickenhauser's class, we learned about ____!"];
+    var personalPackWhite = ["bengay", "Mr. Wooten", "Rhonda", "Henry Retardo", "David Spitz", "Juuling in the third floor bathroom", "Coach Moe", "Nutting in No Nut Novemeber", "time and space", "Right Wing Populism", "Lucas Richardson", "Gillcrist's beard", "Red Dead Redemption 2", "Nick Cockring", "Ian", "Mr. Valentini", "medium-rare ribeye steak", "a liberal", "slig", "homosexuals", "the Victory App", "romaine lettuce", "an epic victory royale", "a pair of gross brown shoes", "a marshmallow someone named Keith", "voiceoverpete", "Hyperdimension Neptunia", '"Killing God", an essay by Sal Nigro', "steamed hams", "a dead game", "Yung Gravy", "Chris Elmore's Tinder account", "splooge", "sully's glistening dome of a head", "watching porn on my TI-84 Plus CE", "playing DOOM on an etch-a-sketch", "a Sprite™ Cranberry", "academic integrity"];
 }
 
 io.on('connection', (socket) => {
@@ -246,10 +246,6 @@ io.on('connection', (socket) => {
                 io.emit('choose-roles', setRoles());
                 shGameActive = true;
                 turnNum++;
-                if (shDeck.length >= 3)
-                    topThreePolicies = [shDeck.pop(), shDeck.pop(), shDeck.pop()];
-                else
-                    buildSHDeck();
             }
         });
 
@@ -919,7 +915,8 @@ function nextRound(data) {
             presNom: presNom,
             pres: president,
             chan: chancellor,
-            u: undesirables
+            u: undesirables,
+            cards: countCards()
         });
         autoChancellor();
     } else {
@@ -930,7 +927,8 @@ function nextRound(data) {
             presNom: data,
             pres: president,
             chan: chancellor,
-            u: undesirables
+            u: undesirables,
+            cards: countCards()
         });
     }
 }
@@ -1013,6 +1011,12 @@ function setRoles() {
     } else if (shPlayers.length == 8) {
         numFascists = 3;
         numLiberals = 5;
+    } else if(shPlayers.length == 9){
+        numFascists = 4;
+        numLiberals = 5;
+    } else if(shPlayers.length == 10){
+        numFascists = 4;
+        numLiberals = 6;
     }
 
     hitler = shPlayers[hIndex];
@@ -1119,6 +1123,14 @@ function resetSHVars() {
     chanPolicy = false;
     peekResult = 0;
     target = '';
+}
+
+function countCards(){
+    var nums = [0, 0];
+    nums[0] = shDeck.length + 3;
+    nums[1] = (17 - (lPols + fPols)) - (shDeck.length + 3);
+    console.log(shDeck);
+    return nums;
 }
 
 //select a judge for GAH

@@ -26,6 +26,7 @@ var presExecuting = false;
 var presChoosingNextPres = false;
 var topThreePolicies = [];
 var undesirables = [];
+var fPols = 0;
 
 var gameNumber = '';
 
@@ -38,10 +39,7 @@ function setup() {
     $('#leave-sh').prop("disabled", true);
     $('#voting').hide();
     $('#cards').hide();
-    $('#inv-abl').prop('disabled', true);
-    $('#exe-abl').prop('disabled', true);
-    $('#spe-abl').prop('disabled', true);
-    $('#pol-abl').prop('disabled', true);
+    $('.abl').hide();
 
     socket.emit('entered-sh-page');
 
@@ -114,7 +112,7 @@ function setup() {
     socket.on('show-active-players', function (data) {
         console.log('sh-show-active-players');
         for (var i = 0; i < data.p.length; i++) {
-            $('#players').append('<div id="' + data.p[i] + '" class="player">' + data.p[i] + "</div>");
+            $('#players').append('<button id="' + data.p[i] + '" class="player">' + data.p[i] + "</button>");
             if (data.rp.includes(data.p[i])) {
                 $('#' + data.p[i]).attr('class', 'player-ready');
             }
@@ -139,6 +137,21 @@ function setup() {
         $('#ready-up').hide();
         $('#play-sh').prop('disable', true);
         chat("STARTING GAME WITH " + data + " PLAYERS...", 'green');
+        if (data == 5 || data == 6) {
+            setAbilitiesLow();
+        } else if (data == 7 || data == 8) {
+            setAbilitiesMid();
+        } else if (data == 9 || data == 10) {
+            setAbilitiesHigh();
+        }
+        $('#draw-label').html('cards remaining: 17');
+        $('#discard-label').html('cards remaining: 0');
+        $('#pol-abl').prop('disabled', true);
+        $('#inv-abl').prop('disabled', true);
+        $('#inv-abl2').prop('disabled', true);
+        $('#spe-abl').prop('disabled', true);
+        $('#exe-abl').prop('disabled', true);
+        $('#exe-abl2').prop('disabled', true);
     });
 
     socket.on('choose-roles', function (data) {
@@ -200,19 +213,20 @@ function setup() {
         $('#' + data.c).attr('class', 'player-chancellor');
         chat(data.c + " has been nominated as " + nameOfChancellor + ".", 'cyan');
         chat("Vote for whether or not you support this government.", 'cyan');
+        $('#voting').append('<p id="vote-message">Vote for whether you support ' + data.p + ' as the ' + nameOfPresident + ' and ' + data.c + ' as the ' + nameOfChancellor + '.</p>');
         if (data.shp.includes(currentUser))
             $('#voting').show();
     });
 
     socket.on('voting-failed', function (data) {
-        for(var i = 0; i < data.va.length; i++){
+        for (var i = 0; i < data.va.length; i++) {
             chat(data.va[i] + " voted AGAINST this government!", 'red');
         }
-        
-        for(var i = 0; i < data.vf.length; i++){
+
+        for (var i = 0; i < data.vf.length; i++) {
             chat(data.vf[i] + " voted FOR this government!", 'green');
         }
-        
+
         chat("The election failed. The next nominee for " + nameOfPresident + " is " + data.presNom);
         $('#' + data.chan).attr('class', 'player');
         $('#' + data.pres).attr('class', 'player');
@@ -231,7 +245,8 @@ function setup() {
 
         undesirables = data.u;
         console.log(undesirables);
-
+        $('#draw-label').html('cards remaining: ' + data.cards[0]);
+        $('#discard-label').html('cards remaining: ' + data.cards[1]);
         if (data.presNom == currentUser) {
             nominateChancellor();
         }
@@ -240,14 +255,14 @@ function setup() {
     socket.on('voting-passed', function (data) {
         president = data.pres;
         chancellor = data.chan;
-        
-        for(var i = 0; i < data.va.length; i++){
+
+        for (var i = 0; i < data.va.length; i++) {
             chat(data.va[i] + " voted AGAINST this government!", 'red');
         }
-        for(var i = 0; i < data.vf.length; i++){
+        for (var i = 0; i < data.vf.length; i++) {
             chat(data.vf[i] + " voted FOR this government!", 'green');
         }
-        
+
         chat("The election was successful. " + president + " is the new " + nameOfPresident + " and " + chancellor + " is the new " + nameOfChancellor + ".", 'cyan');
         if (president == currentUser) {
             presChoosePolicies(data.top);
@@ -267,54 +282,40 @@ function setup() {
     });
 
     socket.on('policy-enacted', function (data) {
+        var id = '#f' + data.fPols;
+        fPols = data.fPols;
         if (data.policy) {
             chat("A " + nameOfFascists + " policy has been enacted.", 'red');
             topThreePolicies = data.top;
-            $('#f-policies').html(nameOfFascists + ' Policies: ' + data.fPols);
+            $(id).append('<p class="card-label">' + nameOfFascists + ' Policy</p>');
             if (president == currentUser) {
-                if (data.players < 7) {
-                    if (data.fPols == 3) {
-                        $('#pol-abl').prop('disabled', false);
-                    } else if (data.fPols == 4 || data.fPols == 5) {
-                        $('#exe-abl').prop('disabled', false);
-                    } else if (data.fPols == 6) {
-                        if(currentUser == president)
-                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
-                    } else {
-                        socket.emit('next-round', '');
-                    }
-                } else if (data.players == 7 || data.players == 8) {
-                    if (data.fPols == 2) {
-                        $('#inv-abl').prop('disabled', false);
-                    } else if (data.fPols == 3) {
-                        $('#spe-abl').prop('disabled', false);
-                    } else if (data.fPols == 4 || data.fPols == 5) {
-                        $('#exe-abl').prop('disabled', false);
-                    } else if (data.fPols == 6) {
-                        if(currentUser == president)
-                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
-                    } else {
-                        socket.emit('next-round', '');
-                    }
-                } else if (data.players == 9 || data.players == 10) {
-                    if (data.fPols == 1 || data.players == 2) {
-                        $('#inv-abl').prop('disabled', false);
-                    } else if (data.fPols == 3) {
-                        $('#spe-abl').prop('disabled', false);
-                    } else if (data.fPols == 4 || data.fPols == 5) {
-                        $('#exe-abl').prop('disabled', false);
-                    } else if (data.fPols == 6) {
-                        if(currentUser == president)
-                            socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'));
-                    } else {
-                        socket.emit('next-round', '');
-                    }
+                if($(id).attr('class') == 'empty-inv' && id == '#f1'){
+                    $(id).attr('id', 'inv-abl');
+                } else if($(id).attr('class') == 'empty-inv' && id == '#f2'){
+                    $(id).attr('id', 'inv-abl2');
+                } else if($(id).attr('class') == 'empty-pol'){
+                    $(id).attr('id', 'pol-abl');
+                } else if($(id).attr('class') == 'empty-spe'){
+                    $(id).attr('id', 'spe-abl');
+                } else if($(id).attr('class') == 'empty-exe' && id == '#f4'){
+                    $(id).attr('id', 'exe-abl');
+                } else if($(id).attr('class') == 'empty-exe' && id == '#f5'){
+                    $(id).attr('id', 'exe-abl2');
+                } else {
+                    $(id).attr('class', 'f-pol-active');
+                    socket.emit('next-round', '');
                 }
+            } else {
+                $(id).attr('class', 'f-pol-active');
             }
 
+            if(fPols == 6){
+                socket.emit('fascists-win', ('Six ' + nameOfFascists + ' policies enacted. ' + nameOfFascists + 's win.'))
+            }
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted.", 'green');
-            $('#l-policies').html(nameOfLiberals + ' Policies: ' + data.lPols);
+            $('#l' + data.lPols).attr('class', "l-pol-active");
+            $('#l' + data.lPols).append('<p class="card-label">' + nameOfLiberals + ' Policy</p>');
             if ((data.lPols == 5) && (president == currentUser)) {
                 socket.emit('liberals-win', ('Five ' + nameOfLiberals + ' policies enacted. ' + nameOfLiberals + 's win.'))
             }
@@ -357,10 +358,12 @@ function setup() {
         chat("3 governments have been consecutively rejected! A random policy will be enacted!");
         if (data.t) {
             chat("A " + nameOfFascists + " policy has been enacted in the chaos!", 'red');
-            $('#f-policies').html(nameOfFascists + ' Policies: ' + (data.f + 1));
+            $('#f' + data.fPols).attr('class', "f-pol-active");
+            $('#f' + data.fPols).append('<p class="card-label">' + nameOfFascists + ' Policy</p>');
         } else {
             chat("A " + nameOfLiberals + " policy has been enacted in the chaos!", 'green');
-            $('#l-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));
+            $('#l-policies').html(nameOfLiberals + ' Policies: ' + (data.l + 1));$('#l' + data.lPols).attr('class', "l-pol-active");
+            $('#l' + data.lPols).append('<p class="card-label">' + nameOfLiberals + ' Policy</p>');
         }
         socket.emit('chaos-policy-enacted', data.t);
     });
@@ -458,18 +461,20 @@ function setup() {
 
     $('#gov-yes').click(function () {
         socket.emit('yes-for-gov', currentUser);
+        $('#vote-message').remove();
         $('#voting').hide();
     });
 
     $('#gov-no').click(function () {
         socket.emit('no-for-gov', currentUser);
+        $('#vote-message').remove();
         $('#voting').hide();
     });
 
     $('#card-a').click(function () {
         var cls = $('#card-a').attr('class');
         if (choosingPoliciesAsPres && cls == 'f-card') {
-            console.log('chose liberal');
+            console.log('chose fascist');
             presPolicies.push(true);
             $(this).hide();
             $(this).prop('disabled', true);
@@ -595,21 +600,28 @@ function setup() {
         }
     });
 
-    $('#inv-abl').click(function () {
-        $('#inv-abl').prop('disabled', true);
-        $('#exe-abl').prop('disabled', true);
-        $('#spe-abl').prop('disabled', true);
-        $('#pol-abl').prop('disabled', true);
+    $('body').on('click', '#inv-abl', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
+
+        presInvestigating = true;
+        chat('Choose a player to investigate.', 'cyan');
+    });
+    
+    $('body').on('click', '#inv-abl2', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
 
         presInvestigating = true;
         chat('Choose a player to investigate.', 'cyan');
     });
 
-    $('#pol-abl').click(function () {
-        $('#inv-abl').prop('disabled', true);
-        $('#exe-abl').prop('disabled', true);
-        $('#spe-abl').prop('disabled', true);
-        $('#pol-abl').prop('disabled', true);
+    $('body').on('click', '#pol-abl', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
 
         var polA = ''
         var polB = '';
@@ -635,21 +647,28 @@ function setup() {
         socket.emit('next-round', '');
     });
 
-    $('#exe-abl').click(function () {
-        $('#inv-abl').prop('disabled', true);
-        $('#exe-abl').prop('disabled', true);
-        $('#spe-abl').prop('disabled', true);
-        $('#pol-abl').prop('disabled', true);
+    $('body').on('click', '#exe-abl', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
+
+        presExecuting = true;
+        chat('Choose a player to execute.', 'cyan');
+    });
+    
+    $('body').on('click', '#exe-abl2', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
 
         presExecuting = true;
         chat('Choose a player to execute.', 'cyan');
     });
 
-    $('#spe-abl').click(function () {
-        $('#inv-abl').prop('disabled', true);
-        $('#exe-abl').prop('disabled', true);
-        $('#spe-abl').prop('disabled', true);
-        $('#pol-abl').prop('disabled', true);
+    $('body').on('click', '#spe-abl', function () {
+        $(this).prop('disabled', true);
+        $(this).attr('class', 'f-pol-active');
+        $(this).attr('id', 'f' + fPols);
 
         presChoosingNextPres = true;
         chat('Choose a player to be selected as ' + nameOfPresident + ' for the next election.');
@@ -767,6 +786,7 @@ function resetVars() {
     presChoosingNextPres = false;
     topThreePolicies = [];
     undesirables = [];
+    fPols = 0;
 }
 
 function presChoosePolicies(top) {
@@ -830,3 +850,41 @@ function chanChoosePolicy(pols) {
         $('#card-b').html(nameOfLiberals + ' Policy');
     }
 }
+
+function setAbilitiesLow() {
+    $('#f3').append('<p>Policy Peek</p>');
+    $('#f4').append('<p>Execute</p>');
+    $('#f5').append('<p>Execute</p>');
+    $('#f3').attr('class', 'empty-pol');
+    $('#f4').attr('class', 'empty-exe');
+    $('#f5').attr('class', 'empty-exe');
+}
+
+function setAbilitiesMid() {
+    $('#f2').append('<p>Investigate</p>');
+    $('#f3').append('<p>Special Election</p>');
+    $('#f4').append('<p>Execute</p>');
+    $('#f5').append('<p>Execute</p>');
+    $('#f2').attr('class', 'empty-inv');
+    $('#f3').attr('class', 'empty-spe');
+    $('#f4').attr('class', 'empty-exe');
+    $('#f5').attr('class', 'empty-exe');
+}
+
+function setAbilitiesHigh() {
+    $('#f1').append('<p>Investigate</p>');
+    $('#f2').append('<p>Investigate</p>');
+    $('#f3').append('<p>Special Election</p>');
+    $('#f4').append('<p>Execute</p>');
+    $('#f5').append('<p>Execute</p>');
+    $('#f1').attr('class', 'empty-inv');
+    $('#f2').attr('class', 'empty-inv');
+    $('#f3').attr('class', 'empty-spe');
+    $('#f4').attr('class', 'empty-exe');
+    $('#f5').attr('class', 'empty-exe');
+}
+
+
+
+
+

@@ -1,0 +1,635 @@
+body {
+    font-family: cursive;
+    background-color: tan;
+    background-size: 110%;
+    color: navy;
+}
+
+input {
+    background-color: burlywood;
+    color: black;
+    padding: 5px 5px;
+    margin: 8px 0;
+    border-width: 1px;
+    border-color: black;
+}
+
+button {
+    background-color: burlywood;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+p {
+    margin: 0px;
+}
+
+nav {
+    list-style-type: none;
+    margin-top: 10px;
+}
+
+button {
+    font-family: fantasy;
+    background-color: burlywood;
+    border: none;
+    color: navy;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+}
+
+#play-sh {
+    margin-top: 10px;
+}
+
+#purge-sh {
+    font-size: 10px;
+}
+
+#purge-password {
+    width: 50px;
+    font-size: 10px;
+    height: 10px;
+}
+
+button:hover {
+    background-color: orange;
+}
+
+button:active {
+    background-color: orangered;
+}
+
+a:visited {
+    color: navy;
+}
+
+a:link {
+    color: navy;
+}
+
+a:hover {
+    color: darkred;
+}
+
+.warning {
+    font-weight: bold;
+}
+
+.guide {
+    font-size: 20px;
+}
+
+#f-policies {
+    float: right;
+    background-color: burlywood;
+    border: solid black 1px;
+    margin-right: 25px;
+}
+
+#l-policies {
+    float: right;
+    background-color: burlywood;
+    border: solid black 1px;
+    margin-right: 25px;
+}
+
+#voting {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#gov-yes {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    width: 100px;
+    height: 75px;
+    background-color: darkgreen;
+}
+
+#gov-no {
+    position: fixed;
+    top: 50%;
+    right: 40%;
+    width: 100px;
+    height: 75px;
+    background-color: darkred;
+}
+
+#gov-yes:hover {
+    background-color: forestgreen;
+}
+
+#gov-no:hover {
+    background-color: indianred;
+}
+
+#gov-yes:active {
+    background-color: greenyellow;
+}
+
+#gov-no:active {
+    background-color: mediumvioletred;
+}
+
+#log {
+    font-family: sans-serif;
+    border: solid black 1px;
+    background-color: burlywood;
+    padding: 5px;
+    width: 99%;
+    height: 200px;
+    overflow: auto;
+    display: inline-block;
+}
+
+#logged-in {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+#players {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+#hud-bottom {
+    padding-top: 50px;
+    display: inline-block;
+    width: 100%;
+}
+
+#notes {
+    float: right;
+    color: navy;
+    font-family: sans-serif;
+    margin-right: 52px;
+    border: solid black 1px;
+    background-color: burlywood;
+    width: 35%;
+    height: 150px;
+    resize: none;
+    font-size: 13px;
+    padding: 5px;
+}
+
+#hud-top {
+    display: inline-block;
+    width: 100%;
+}
+
+#hand {
+    border: solid black 1px;
+    background-color: burlywood;
+    display: inline-block;
+    padding: 5px;
+    width: 35%;
+    vertical-align: top;
+    height: 200px;
+}
+
+
+.player {
+    background-color: dimgray;
+    padding: 4px;
+    display: inline-block;
+    margin-right: 4px;
+    color: aliceblue;
+}
+
+#chat {
+    display: inline-block;
+    width: 60%;
+}
+
+.player-ready {
+    background-color: green;
+    padding: 4px;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.player-chancellor {
+    background-color: dimgray;
+    padding: 4px;
+    display: inline-block;
+    margin-right: 4px;
+    border: solid red 3px;
+}
+
+.player-president {
+    background-color: dimgray;
+    padding: 4px;
+    display: inline-block;
+    margin-right: 4px;
+    border: solid cyan 3px;
+    color: aliceblue;
+}
+
+.msg {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding: 2px;
+}
+
+.player:hover {
+    background-color: darkgreen;
+}
+
+.player:active {
+    background-color: chartreuse;
+}
+
+.role {
+    font-size: 40px;
+}
+
+#card-a {
+    background-color: cornflowerblue;
+    width: 20%;
+    height: 40%;
+    top: 50%;
+    left: 10%;
+    position: fixed;
+}
+
+#card-b {
+    background-color: cornflowerblue;
+    width: 20%;
+    height: 40%;
+    top: 50%;
+    left: 40%;
+    position: fixed;
+}
+
+#card-c {
+    background-color: cornflowerblue;
+    width: 20%;
+    height: 40%;
+    top: 50%;
+    right: 10%;
+    position: fixed;
+}
+
+#card-a:active {
+    background-color: deepskyblue;
+}
+
+#card-a:hover {
+    background-color: darkblue;
+}
+
+#card-b:active {
+    background-color: deepskyblue;
+}
+
+#card-b:hover {
+    background-color: darkblue;
+}
+
+#card-c:active {
+    background-color: deepskyblue;
+}
+
+#card-c:hover {
+    background-color: darkblue;
+}
+
+#cards {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#credits {
+    margin-top: 200px;
+    margin-bottom: 0px;
+}
+
+#game-list {
+    display: inline-block;
+}
+
+.game-button {
+    margin-right: 50px;
+    width: 80px;
+    font-size: 11px;
+}
+
+#player-count-list {
+    display: inline-block;
+}
+
+.player-count {
+    margin-right: 50px;
+    width: 80px;
+    display: inline-block;
+}
+
+.board-fascist {
+    border: solid black 1px;
+    background-color: #db8383;
+    width: 75%;
+    height: 300px;
+    float: left;
+    background-position: center;
+}
+
+.board-liberal {
+    border: solid black 1px;
+    background-color: burlywood;
+    width: 75%;
+    height: 300px;
+    float: left;
+    margin-bottom: 5px;
+    display: inline-block;
+    background-color: #8fa3c4;
+}
+
+#pol-deck {
+    background-color: burlywood;
+    border: solid black 1px;
+    width: 15%;
+    height: 300px;
+    float: right;
+    margin-right: 5%;
+}
+
+#pol-discard {
+    background-color: burlywood;
+    border: solid black 1px;
+    width: 15%;
+    height: 300px;
+    float: right;
+    margin-right: 5%;
+}
+
+#tabletop {
+    display: auto;
+    width: 100%;
+    height: auto;
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+.board-title {
+    text-align: center;
+    font-size: 25px;
+}
+
+.l-pol-empty {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    display: inline-block;
+    align-content: center;
+    background-color: #9cb1d3;
+}
+
+.f-pol-empty {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: #d89c9c;
+    text-align: center;
+    float: left;
+}
+
+#f-pols-board {
+    width: 100%;
+    margin-left: 4.5%;
+}
+
+#l-pols-board {
+    width: 100%;
+    margin-left: 12%;
+}
+
+#discard-warning {
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    text-align: center;
+    font-size: 30px;
+    color: aliceblue;
+}
+
+.f-pol-active {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: red;
+    text-align: center;
+    float: left;
+}
+
+.l-pol-active {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkblue 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: blue;
+    text-align: center;
+    float: left;
+}
+
+.card-label {
+    color: antiquewhite;
+    font-size: 20px;
+    text-align: left;
+}
+
+#vote-message {
+    position: fixed;
+    top: 30%;
+    left: 15%;
+    text-align: center;
+    font-size: 30px;
+    color: aliceblue;
+}
+
+.empty-pol {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: #d89c9c;
+    text-align: center;
+    float: left;
+}
+
+.empty-inv {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: #d89c9c;
+    text-align: center;
+    float: left;
+}
+
+.empty-spe {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: #d89c9c;
+    text-align: center;
+    float: left;
+}
+
+.empty-exe {
+    width: 12.5%;
+    height: 200px;
+    border: solid black 2px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: #d89c9c;
+    text-align: center;
+    float: left;
+}
+
+#pol-abl {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#pol-abl:hover {
+    background-color: darkmagenta;
+}
+
+#pol-abl:active {
+    background-color: darkorange;
+}
+
+#inv-abl {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#inv-abl:hover {
+    background-color: darkmagenta;
+}
+
+#inv-abl:active {
+    background-color: darkorange;
+}
+
+#inv-abl2 {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#inv-abl2:hover {
+    background-color: darkmagenta;
+}
+
+#inv-abl2:active {
+    background-color: darkorange;
+}
+
+#spe-abl {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#spe-abl:hover {
+    background-color: darkmagenta;
+}
+
+#spe-abl:active {
+    background-color: darkorange;
+}
+
+#exe-abl {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#exe-abl:hover {
+    background-color: darkmagenta;
+}
+
+#exe-abl:active {
+    background-color: darkorange;
+}
+
+#exe-abl2 {
+    width: 12.5%;
+    height: 200px;
+    border: solid darkred 3px;
+    margin-left: 20px;
+    align-content: center;
+    background-color: yellow;
+    text-align: center;
+    float: left;
+}
+
+#exe-abl2:hover {
+    background-color: darkmagenta;
+}
+
+#exe-abl2:active {
+    background-color: darkorange;
+}
